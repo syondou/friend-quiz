@@ -4,1448 +4,345 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>友達からのちょっとした質問状 ✉️</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Zen Maru Gothic & Noto Sans JP -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Noto Sans JP"', 'sans-serif'],
-            rounded: ['"Zen Maru Gothic"', '"Noto Sans JP"', 'sans-serif'],
-          },
-          colors: {
-            cream: '#FAF6F0',
-            sand: '#EFE9DF',
-            terracotta: '#D97757',
-            terracottaDark: '#C26142',
-            sage: '#7A9E7E',
-            charcoal: '#2D2A26',
-            muted: '#7A7267',
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
+    :root {
+      --bg-color: #FDFBF7;
+      --card-bg: #FFFFFF;
+      --primary-color: #E07A5F;
+      --text-main: #3D405B;
+      --text-muted: #81B29A;
+      --border-radius: 16px;
+      --transition-speed: 0.4s;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; }
+    
     body {
-      background-color: #FAF6F0;
-      background-image:
-        radial-gradient(at 12% 10%, rgba(217, 119, 87, 0.11) 0px, transparent 50%),
-        radial-gradient(at 88% 90%, rgba(122, 158, 126, 0.14) 0px, transparent 50%);
-      color: #2D2A26;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
       min-height: 100vh;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
-    @keyframes slideFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(14px) scale(0.985);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @keyframes popReveal {
-      0% {
-        transform: scale(0.75) rotate(-6deg);
-        opacity: 0;
-      }
-      65% {
-        transform: scale(1.08) rotate(2deg);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
-      }
-    }
-
-    .animate-card {
-      animation: slideFadeIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    .animate-pop {
-      animation: popReveal 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    /* Custom Range Slider */
-    input[type="range"].warm-slider {
-      -webkit-appearance: none;
-      appearance: none;
+    .container {
       width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: #E6DFD3;
-      outline: none;
-      transition: background 0.2s;
+      max-width: 400px;
+      height: 90vh;
+      max-height: 700px;
+      position: relative;
+      background: var(--card-bg);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    input[type="range"].warm-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #D97757;
-      border: 4px solid #FFFDF9;
-      box-shadow: 0 4px 10px rgba(217, 119, 87, 0.35);
+    .card {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      padding: 30px 24px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(20px);
+      transition: all var(--transition-speed) ease;
+      overflow-y: auto;
+    }
+
+    .card.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    h2 { font-size: 1.3rem; margin-bottom: 24px; line-height: 1.5; color: var(--text-main); }
+    .subtitle { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; }
+
+    .option-btn {
+      background: #F4F1EA;
+      border: 2px solid transparent;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      font-size: 1rem;
+      color: var(--text-main);
+      text-align: left;
       cursor: pointer;
-      transition: transform 0.15s ease, background-color 0.15s ease;
+      transition: all 0.2s;
+      width: 100%;
     }
 
-    input[type="range"].warm-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.12);
-      background: #C26142;
+    .option-btn:hover, .option-btn:focus { background: #EAE6DF; }
+    .option-btn.selected {
+      background: #FFF3E0;
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      font-weight: bold;
     }
 
-    input[type="range"].warm-slider::-moz-range-thumb {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #D97757;
-      border: 4px solid #FFFDF9;
-      box-shadow: 0 4px 10px rgba(217, 119, 87, 0.35);
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid #EAE6DF;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #F9F8F6;
+      margin-top: 10px;
+      resize: none;
+    }
+    input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--primary-color); }
+
+    .slider-container { margin: 30px 0; text-align: center; }
+    input[type="range"] { width: 100%; margin-bottom: 15px; accent-color: var(--primary-color); }
+    .slider-labels { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); }
+    #slider-value-text { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); margin-bottom: 10px; display: block; }
+
+    .next-btn {
+      margin-top: auto;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: bold;
       cursor: pointer;
-      transition: transform 0.15s ease;
+      box-shadow: 0 4px 15px rgba(224, 122, 95, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .next-btn:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(224, 122, 95, 0.3); }
+    .next-btn:disabled { background: #D3D3D3; box-shadow: none; cursor: not-allowed; }
+
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .emoji-card {
+      background: #F4F1EA;
+      border-radius: 12px;
+      padding: 30px 0;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .emoji-card.emoji-card-full { grid-column: span 2; }
+    .emoji-card:hover { background: #EAE6DF; transform: scale(1.05); }
+    .emoji-result { font-size: 4rem; margin: 30px 0; text-align: center; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .emoji-message { text-align: center; font-size: 1.1rem; line-height: 1.6; }
+    
+    @keyframes pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
-    /* Option Card Selected State */
-    .option-card {
-      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .option-card:active {
-      transform: scale(0.985);
-    }
-    .option-card.selected {
-      background-color: #FFF6F2;
-      border-color: #D97757;
-      box-shadow: 0 4px 14px rgba(217, 119, 87, 0.14);
-    }
-    .option-card.selected .radio-dot {
-      border-color: #D97757;
-      background-color: #D97757;
-    }
-    .option-card.selected .radio-dot::after {
-      content: '';
-      display: block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: white;
-    }
-
-    /* Mystery Number Card */
-    .mystery-card {
-      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .mystery-card:hover:not(:disabled) {
-      transform: translateY(-4px);
-      border-color: #D97757;
-      box-shadow: 0 8px 20px rgba(217, 119, 87, 0.16);
-    }
-    .mystery-card:active:not(:disabled) {
-      transform: scale(0.96);
-    }
-
-    /* Stationery Postcard Dashed Frame */
-    .postcard-border {
-      background-image: linear-gradient(to right, #D97757 50%, transparent 50%),
-                        linear-gradient(to right, #D97757 50%, transparent 50%),
-                        linear-gradient(to bottom, #D97757 50%, transparent 50%),
-                        linear-gradient(to bottom, #D97757 50%, transparent 50%);
-      background-position: left top, left bottom, left top, right top;
-      background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-      background-size: 16px 2px, 16px 2px, 2px 16px, 2px 16px;
-    }
+    footer { text-align: center; padding: 15px; font-size: 0.8rem; color: #ccc; }
   </style>
 </head>
-<body class="flex flex-col items-center justify-center p-4 sm:p-6 antialiased selection:bg-terracotta/20 selection:text-charcoal">
+<body>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-2">
-    <div id="toast-content" class="bg-charcoal text-cream px-5 py-3 rounded-full shadow-lg text-xs sm:text-sm font-medium flex items-center gap-2 whitespace-nowrap">
-      <span id="toast-icon">✨</span>
-      <span id="toast-message">お知らせ</span>
+  <div class="container">
+    
+    <!-- 歡迎頁 -->
+    <div class="card active" id="step-0">
+      <div style="text-align:center; margin:auto 0;">
+        <div style="font-size:3rem; margin-bottom:20px;">💌</div>
+        <h2>友達からの<br>ちょっとした質問状</h2>
+        <p class="subtitle">5つの簡単な質問です。<br>直感で答えてみてね！</p>
+      </div>
+      <button class="next-btn" onclick="nextStep(1)">はじめる ✨</button>
     </div>
+
+    <!-- Q1 -->
+    <div class="card" id="step-1">
+      <p class="subtitle">質問 1 / 5</p>
+      <h2>もし今、手元の用事が全部片付いたら、どこに行きたい？</h2>
+      <button class="option-btn" onclick="selectOption(1, '山')">🌲 山</button>
+      <button class="option-btn" onclick="selectOption(1, '海')">🌊 海</button>
+      <button class="option-btn" onclick="selectOption(1, 'ボウリング')">🎳 ボウリング</button>
+      <button class="option-btn" onclick="selectOption(1, '旅行')">✈️ 旅行</button>
+      <button class="option-btn" onclick="selectOption(1, 'other')">💡 その他（自由入力）</button>
+      <input type="text" id="q1-other" placeholder="どこに行きたい？" style="display:none;" oninput="checkInput(1)">
+      <button class="next-btn" id="btn-1" disabled onclick="nextStep(2)">次へ</button>
+    </div>
+
+    <!-- Q2 -->
+    <div class="card" id="step-2">
+      <p class="subtitle">質問 2 / 5</p>
+      <h2>この質問状を送ってくれた人と、何か一緒にアクティビティをしたい？</h2>
+      <div class="slider-container">
+        <span id="slider-value-text">まあまあ (50%)</span>
+        <input type="range" id="q2-slider" min="0" max="100" value="50" oninput="updateSlider(this.value)">
+        <div class="slider-labels">
+          <span>全然思わない</span>
+          <span>超したい！</span>
+        </div>
+      </div>
+      <button class="next-btn" onclick="nextStep(3)">次へ</button>
+    </div>
+
+    <!-- Q3 -->
+    <div class="card" id="step-3">
+      <p class="subtitle">質問 3 / 5</p>
+      <h2>もしこの友達とケンカしちゃったら、仲直りしたいと思う？</h2>
+      <button class="option-btn" onclick="selectOption(3, 'する、いい人だから')">する、いい人だから</button>
+      <button class="option-btn" onclick="selectOption(3, 'する、私にとって大切な人だから')">する、私にとって大切な人だから</button>
+      <button class="option-btn" onclick="selectOption(3, 'しない、最近そこまでの気力がない')">しない、最近そこまでの気力がない</button>
+      <button class="option-btn" onclick="selectOption(3, 'しない、誰に対しても引き留めない')">しない、誰に対しても引き留めない</button>
+      <button class="next-btn" id="btn-3" disabled onclick="nextStep(4)">次へ</button>
+    </div>
+
+    <!-- Q4 -->
+    <div class="card" id="step-4">
+      <p class="subtitle">質問 4 / 5</p>
+      <h2>最近、この友達には自分の本音を素直に話せてる？</h2>
+      <button class="option-btn" onclick="selectOption(4, 'うん、もっと伝えたい')">うん、もっと伝えたい</button>
+      <button class="option-btn" onclick="selectOption(4, 'うん、でも特に伝えたいことはない')">うん、でも特に伝えたいことはない</button>
+      <button class="option-btn" onclick="selectOption(4, '少し難しい、でももっと素直になりたい')">少し難しい、でももっと素直になりたい</button>
+      <button class="option-btn" onclick="selectOption(4, '無理、もうあまり関わりたくない')">無理、もうあまり関わりたくない</button>
+      <button class="next-btn" id="btn-4" disabled onclick="nextStep(5)">次へ</button>
+    </div>
+
+    <!-- Q5 -->
+    <div class="card" id="step-5">
+      <p class="subtitle">最後の質問 5 / 5</p>
+      <h2>これで最後です！今、相手に伝えたいことがあれば自由に書いてね。</h2>
+      <textarea id="q5-text" rows="5" placeholder="なんでもどうぞ！(空白でもOK)" oninput="checkInput(5)"></textarea>
+      <button class="next-btn" id="btn-5" onclick="submitAndNext()">回答を完了する ✨</button>
+    </div>
+
+    <!-- Emoji 選擇頁 (提交後顯示) -->
+    <div class="card" id="step-6">
+      <div style="margin: auto 0;">
+        <h2 style="text-align:center;">お疲れ様でした！</h2>
+        <p class="subtitle" style="text-align:center; color:var(--text-main); font-size:1rem;">友達が5つの絵文字を用意してくれました。<br>1〜5の中から好きな数字を1つ選んでタップしてね！</p>
+        <div class="emoji-grid">
+          <div class="emoji-card" onclick="revealEmoji(1, '🌱')">1</div>
+          <div class="emoji-card" onclick="revealEmoji(2, '🍀')">2</div>
+          <div class="emoji-card" onclick="revealEmoji(3, '🫧')">3</div>
+          <div class="emoji-card" onclick="revealEmoji(4, '🌙')">4</div>
+          <div class="emoji-card emoji-card-full" onclick="revealEmoji(5, '🌻')">5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 最終結果頁 -->
+    <div class="card" id="step-7">
+      <div style="text-align:center; margin:auto 0;">
+        <h2 id="final-title">あなたが選んだのは...</h2>
+        <div class="emoji-result" id="final-emoji"></div>
+        <p class="emoji-message" id="final-message"></p>
+      </div>
+      <footer>© 2026</footer>
+    </div>
+
   </div>
 
-  <!-- Main Quiz Container (Always visible immediately on load) -->
-  <main id="quiz-main" class="w-full max-w-md mx-auto">
-
-    <!-- Top Progress Header (Hidden on Intro & Result) -->
-    <div id="progress-header" class="hidden mb-4 px-1">
-      <div class="flex justify-between items-center text-xs font-medium text-muted mb-2">
-        <span id="step-label">質問 1 / 全 5 問</span>
-        <span id="step-percent">20%</span>
-      </div>
-      <div class="w-full h-2 bg-sand rounded-full overflow-hidden">
-        <div id="progress-bar" class="h-full bg-terracotta rounded-full transition-all duration-500 ease-out" style="width: 20%;"></div>
-      </div>
-    </div>
-
-    <!-- Main Stationery Card -->
-    <div id="app-card" class="bg-[#FFFDF9] rounded-3xl shadow-[0_12px_36px_rgba(45,42,38,0.08)] border border-sand p-6 sm:p-8 relative overflow-hidden">
-
-      <!-- Decorative Corner Circles -->
-      <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-sage/10 pointer-events-none"></div>
-      <div class="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-terracotta/10 pointer-events-none"></div>
-
-      <!-- ==================== INTRO SCREEN ==================== -->
-      <section id="screen-intro" class="animate-card relative z-10 text-center py-2">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-terracotta/10 text-3xl mb-5 shadow-inner">
-          ✉️
-        </div>
-        <span class="inline-block text-[11px] font-bold tracking-widest uppercase text-terracotta bg-terracotta/10 px-3 py-1 rounded-full mb-3">
-          MINI QUESTIONNAIRE
-        </span>
-        <h1 class="font-rounded text-2xl sm:text-3xl font-bold text-charcoal leading-snug mb-3">
-          友達からの<br>ちょっとした質問状 ✉️
-        </h1>
-        <p class="text-muted text-sm leading-relaxed mb-7">
-          堅苦しいテストじゃありません！<br>
-          直感で5つの質問に答えてみてね。最後にはちょっとしたお楽しみも用意してあります✨
-        </p>
-
-        <!-- Optional Nickname Input -->
-        <div class="text-left mb-6 bg-cream/90 p-4 rounded-2xl border border-sand">
-          <label for="friend-name" class="block text-xs font-bold text-muted mb-1.5">
-            あなたのニックネーム <span class="font-normal opacity-75">（任意）</span>
-          </label>
-          <input
-            type="text"
-            id="friend-name"
-            maxlength="20"
-            placeholder="例：ゆい、いつもの相棒..."
-            class="w-full bg-white border border-sand focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 rounded-xl px-3.5 py-2.5 text-sm text-charcoal placeholder:text-muted/50 outline-none transition"
-          >
-        </div>
-
-        <button
-          type="button"
-          onclick="startQuiz()"
-          class="w-full bg-terracotta hover:bg-terracottaDark active:scale-[0.99] text-white font-bold py-3.5 px-6 rounded-2xl shadow-md shadow-terracotta/25 transition-all flex items-center justify-center gap-2 text-base cursor-pointer"
-        >
-          <span>スタートする</span>
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-          </svg>
-        </button>
-      </section>
-
-      <!-- ==================== QUESTION 1 ==================== -->
-      <section id="screen-q1" class="hidden animate-card relative z-10">
-        <div class="inline-block text-xs font-bold text-sage bg-sage/15 px-3 py-1 rounded-full mb-3">
-          QUESTION 01
-        </div>
-        <h2 class="font-rounded text-xl sm:text-2xl font-bold text-charcoal leading-snug mb-6">
-          今抱えていることが一段落したら、どこに行きたい？
-        </h2>
-
-        <div class="space-y-3" id="q1-options">
-          <button type="button" onclick="selectQ1('山')" data-val="山" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between cursor-pointer">
-            <div class="flex items-center gap-3">
-              <span class="text-xl">⛰️</span>
-              <span class="font-medium text-charcoal">山</span>
-            </div>
-            <span class="radio-dot w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-
-          <button type="button" onclick="selectQ1('海')" data-val="海" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between cursor-pointer">
-            <div class="flex items-center gap-3">
-              <span class="text-xl">🌊</span>
-              <span class="font-medium text-charcoal">海</span>
-            </div>
-            <span class="radio-dot w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-
-          <button type="button" onclick="selectQ1('ボウリング')" data-val="ボウリング" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between cursor-pointer">
-            <div class="flex items-center gap-3">
-              <span class="text-xl">🎳</span>
-              <span class="font-medium text-charcoal">ボウリング</span>
-            </div>
-            <span class="radio-dot w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-
-          <button type="button" onclick="selectQ1('旅行')" data-val="旅行" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between cursor-pointer">
-            <div class="flex items-center gap-3">
-              <span class="text-xl">✈️</span>
-              <span class="font-medium text-charcoal">旅行</span>
-            </div>
-            <span class="radio-dot w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-
-          <button type="button" onclick="selectQ1('その他')" data-val="その他" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between cursor-pointer">
-            <div class="flex items-center gap-3">
-              <span class="text-xl">✏️</span>
-              <span class="font-medium text-charcoal">その他（自由記入）</span>
-            </div>
-            <span class="radio-dot w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-        </div>
-
-        <!-- Expandable Custom Input for Q1 -->
-        <div id="q1-custom-wrap" class="hidden mt-3 transition-all">
-          <input
-            type="text"
-            id="q1-custom-input"
-            placeholder="行きたい場所を自由に入力してね..."
-            class="w-full bg-cream border-2 border-terracotta/60 focus:border-terracotta rounded-xl px-4 py-3 text-sm text-charcoal placeholder:text-muted/60 outline-none"
-          >
-        </div>
-
-        <!-- Nav Buttons -->
-        <div class="flex gap-3 mt-8">
-          <button type="button" onclick="goToStep(0)" class="px-4 py-3 rounded-xl border border-sand text-muted hover:bg-sand/50 font-medium text-sm transition cursor-pointer">
-            戻る
-          </button>
-          <button type="button" onclick="nextFromQ1()" class="flex-1 bg-terracotta hover:bg-terracottaDark text-white font-bold py-3 px-6 rounded-xl shadow-sm transition cursor-pointer">
-            次へ進む
-          </button>
-        </div>
-      </section>
-
-      <!-- ==================== QUESTION 2 ==================== -->
-      <section id="screen-q2" class="hidden animate-card relative z-10">
-        <div class="inline-block text-xs font-bold text-sage bg-sage/15 px-3 py-1 rounded-full mb-3">
-          QUESTION 02
-        </div>
-        <h2 class="font-rounded text-xl sm:text-2xl font-bold text-charcoal leading-snug mb-2">
-          このテストを送ってくれた人と、何か一緒にやりたいことはある？
-        </h2>
-        <p class="text-xs text-muted mb-6">スライダーを左右に動かして、今の気分に一番近いところを選んでね！</p>
-
-        <!-- Slider Box -->
-        <div class="bg-cream/95 border border-sand rounded-2xl p-6 my-4 text-center">
-          <!-- Dynamic Mood Badge -->
-          <div class="mb-5">
-            <div id="q2-emoji" class="text-4xl mb-2 transition-transform duration-200">🙂</div>
-            <div class="inline-flex items-baseline gap-1 bg-white px-4 py-1.5 rounded-full border border-sand shadow-xs">
-              <span id="q2-value-display" class="font-rounded text-xl font-bold text-terracotta">50</span>
-              <span class="text-xs text-muted font-medium">%</span>
-            </div>
-            <p id="q2-mood-text" class="text-sm font-bold text-charcoal mt-3">
-              「タイミングが合えば！」
-            </p>
-          </div>
-
-          <!-- Range Input -->
-          <div class="px-1 my-4">
-            <input
-              type="range"
-              id="q2-slider"
-              min="0"
-              max="100"
-              value="50"
-              oninput="updateSlider(this.value)"
-              class="warm-slider"
-            >
-          </div>
-
-          <!-- End Labels -->
-          <div class="flex justify-between items-center text-[11px] sm:text-xs font-bold text-muted mt-2 px-0.5">
-            <span class="bg-sand/80 px-2.5 py-1 rounded-lg">したくない</span>
-            <span class="bg-terracotta/15 text-terracotta px-2.5 py-1 rounded-lg">すごくしたい</span>
-          </div>
-        </div>
-
-        <!-- Nav Buttons -->
-        <div class="flex gap-3 mt-8">
-          <button type="button" onclick="goToStep(1)" class="px-4 py-3 rounded-xl border border-sand text-muted hover:bg-sand/50 font-medium text-sm transition cursor-pointer">
-            前へ戻る
-          </button>
-          <button type="button" onclick="goToStep(3)" class="flex-1 bg-terracotta hover:bg-terracottaDark text-white font-bold py-3 px-6 rounded-xl shadow-sm transition cursor-pointer">
-            次へ進む
-          </button>
-        </div>
-      </section>
-
-      <!-- ==================== QUESTION 3 ==================== -->
-      <section id="screen-q3" class="hidden animate-card relative z-10">
-        <div class="inline-block text-xs font-bold text-sage bg-sage/15 px-3 py-1 rounded-full mb-3">
-          QUESTION 03
-        </div>
-        <h2 class="font-rounded text-xl sm:text-2xl font-bold text-charcoal leading-snug mb-6">
-          もしこのテストを送ってくれた友達とケンカしたら、仲直りしたいと思う？
-        </h2>
-
-        <div class="space-y-3" id="q3-options">
-          <button type="button" onclick="selectSingleOption('q3', 'する、友達はいい人だから')" data-val="する、友達はいい人だから" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between gap-3 cursor-pointer">
-            <span class="font-medium text-charcoal text-sm sm:text-base">する、友達はいい人だから</span>
-            <span class="radio-dot shrink-0 w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-
-          <button type="button" onclick="selectSingleOption('q3', 'する、この友達は私にとって大切だから')" data-val="する、この友達は私にとって大切だから" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between gap-3 cursor-pointer">
-            <span class="font-medium text-charcoal text-sm sm:text-base">する、この友達は私にとって大切だから</span>
-            <span class="radio-dot shrink-0 w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-
-          <button type="button" onclick="selectSingleOption('q3', 'しない、最近はそんな気力がない')" data-val="しない、最近はそんな気力がない" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between gap-3 cursor-pointer">
-            <span class="font-medium text-charcoal text-sm sm:text-base">しない、最近はそんな気力がない</span>
-            <span class="radio-dot shrink-0 w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-
-          <button type="button" onclick="selectSingleOption('q3', 'しない、誰のことも引き留めない')" data-val="しない、誰のことも引き留めない" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between gap-3 cursor-pointer">
-            <span class="font-medium text-charcoal text-sm sm:text-base">しない、誰のことも引き留めない</span>
-            <span class="radio-dot shrink-0 w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-        </div>
-
-        <!-- Nav Buttons -->
-        <div class="flex gap-3 mt-8">
-          <button type="button" onclick="goToStep(2)" class="px-4 py-3 rounded-xl border border-sand text-muted hover:bg-sand/50 font-medium text-sm transition cursor-pointer">
-            前へ戻る
-          </button>
-          <button type="button" onclick="nextFromQ3()" class="flex-1 bg-terracotta hover:bg-terracottaDark text-white font-bold py-3 px-6 rounded-xl shadow-sm transition cursor-pointer">
-            次へ進む
-          </button>
-        </div>
-      </section>
-
-      <!-- ==================== QUESTION 4 ==================== -->
-      <section id="screen-q4" class="hidden animate-card relative z-10">
-        <div class="inline-block text-xs font-bold text-sage bg-sage/15 px-3 py-1 rounded-full mb-3">
-          QUESTION 04
-        </div>
-        <h2 class="font-rounded text-xl sm:text-2xl font-bold text-charcoal leading-snug mb-6">
-          最近、この友達に自分の本音や気持ちを素直に話せる？
-        </h2>
-
-        <div class="space-y-3" id="q4-options">
-          <button type="button" onclick="selectSingleOption('q4', '話せる、もっと伝えたい')" data-val="話せる、もっと伝えたい" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between gap-3 cursor-pointer">
-            <span class="font-medium text-charcoal text-sm sm:text-base">話せる、もっと伝えたい</span>
-            <span class="radio-dot shrink-0 w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-
-          <button type="button" onclick="selectSingleOption('q4', '話せる、でも特に伝えたいことはない')" data-val="話せる、でも特に伝えたいことはない" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between gap-3 cursor-pointer">
-            <span class="font-medium text-charcoal text-sm sm:text-base">話せる、でも特に伝えたいことはない</span>
-            <span class="radio-dot shrink-0 w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-
-          <button type="button" onclick="selectSingleOption('q4', 'ちょっと難しい、でももっと素直に伝えたい')" data-val="ちょっと難しい、でももっと素直に伝えたい" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between gap-3 cursor-pointer">
-            <span class="font-medium text-charcoal text-sm sm:text-base">ちょっと難しい、でももっと素直に伝えたい</span>
-            <span class="radio-dot shrink-0 w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-
-          <button type="button" onclick="selectSingleOption('q4', '無理、もうあまり関わりたくない')" data-val="無理、もうあまり関わりたくない" class="option-card w-full text-left p-4 rounded-2xl border-2 border-sand bg-white hover:border-terracotta/50 flex items-center justify-between gap-3 cursor-pointer">
-            <span class="font-medium text-charcoal text-sm sm:text-base">無理、もうあまり関わりたくない</span>
-            <span class="radio-dot shrink-0 w-5 h-5 rounded-full border-2 border-muted/40 flex items-center justify-center transition"></span>
-          </button>
-        </div>
-
-        <!-- Nav Buttons -->
-        <div class="flex gap-3 mt-8">
-          <button type="button" onclick="goToStep(3)" class="px-4 py-3 rounded-xl border border-sand text-muted hover:bg-sand/50 font-medium text-sm transition cursor-pointer">
-            前へ戻る
-          </button>
-          <button type="button" onclick="nextFromQ4()" class="flex-1 bg-terracotta hover:bg-terracottaDark text-white font-bold py-3 px-6 rounded-xl shadow-sm transition cursor-pointer">
-            次へ進む
-          </button>
-        </div>
-      </section>
-
-      <!-- ==================== QUESTION 5 ==================== -->
-      <section id="screen-q5" class="hidden animate-card relative z-10">
-        <div class="inline-block text-xs font-bold text-sage bg-sage/15 px-3 py-1 rounded-full mb-3">
-          FINAL QUESTION
-        </div>
-        <h2 class="font-rounded text-xl sm:text-2xl font-bold text-charcoal leading-snug mb-2">
-          これが最後の質問です。伝えたいことがあれば自由に書いてね
-        </h2>
-        <p class="text-xs text-muted mb-5">空欄のまま完了しても大丈夫です ✨</p>
-
-        <div class="relative mb-4">
-          <textarea
-            id="q5-textarea"
-            rows="5"
-            maxlength="300"
-            oninput="updateCharCount(this)"
-            placeholder="普段言えないことや、最近思っていることなど何でもOK！"
-            class="w-full bg-cream/85 border-2 border-sand focus:border-terracotta focus:bg-white rounded-2xl p-4 text-sm sm:text-base text-charcoal placeholder:text-muted/55 outline-none transition resize-none leading-relaxed"
-          ></textarea>
-          <div class="text-right text-xs text-muted mt-1.5">
-            <span id="char-count">0</span> / 300
-          </div>
-        </div>
-
-        <!-- Nav Buttons -->
-        <div class="flex gap-3 mt-6">
-          <button type="button" onclick="goToStep(4)" class="px-4 py-3 rounded-xl border border-sand text-muted hover:bg-sand/50 font-medium text-sm transition cursor-pointer">
-            前へ戻る
-          </button>
-          <button type="button" id="submit-btn" onclick="completeQuizSilently()" class="flex-1 bg-terracotta hover:bg-terracottaDark text-white font-bold py-3.5 px-6 rounded-xl shadow-md shadow-terracotta/25 transition flex items-center justify-center gap-2 cursor-pointer">
-            <span id="submit-btn-text">回答を完了する</span>
-            <span>✨</span>
-          </button>
-        </div>
-      </section>
-
-      <!-- ==================== FINAL COMPLETION & 1–5 EMOJI MYSTERY BOX ==================== -->
-      <section id="screen-result" class="hidden animate-card relative z-10 text-center">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-sage/15 text-2xl mb-3">
-          🎁
-        </div>
-        <h2 class="font-rounded text-xl sm:text-2xl font-bold text-charcoal leading-snug mb-3">
-          おつかれさまでした！✨
-        </h2>
-        <p class="text-sm text-charcoal/90 leading-relaxed mb-6 bg-cream/90 border border-sand rounded-2xl p-4">
-          友達が5つの絵文字を用意してくれました。<br>
-          <span class="font-bold text-terracotta">1〜5の中から好きな数字を1つ選んでタップしてね！</span>
-        </p>
-
-        <!-- 5 Interactive Number Mystery Cards -->
-        <div id="emoji-grid" class="grid grid-cols-5 gap-2 sm:gap-2.5 mb-6">
-          <button type="button" onclick="revealMysteryEmoji(1)" id="mystery-btn-1" class="mystery-card aspect-square rounded-2xl bg-white border-2 border-sand flex flex-col items-center justify-center shadow-xs cursor-pointer">
-            <span class="font-rounded text-xl sm:text-2xl font-bold text-terracotta">1</span>
-            <span class="text-[10px] text-muted mt-0.5">OPEN</span>
-          </button>
-          <button type="button" onclick="revealMysteryEmoji(2)" id="mystery-btn-2" class="mystery-card aspect-square rounded-2xl bg-white border-2 border-sand flex flex-col items-center justify-center shadow-xs cursor-pointer">
-            <span class="font-rounded text-xl sm:text-2xl font-bold text-terracotta">2</span>
-            <span class="text-[10px] text-muted mt-0.5">OPEN</span>
-          </button>
-          <button type="button" onclick="revealMysteryEmoji(3)" id="mystery-btn-3" class="mystery-card aspect-square rounded-2xl bg-white border-2 border-sand flex flex-col items-center justify-center shadow-xs cursor-pointer">
-            <span class="font-rounded text-xl sm:text-2xl font-bold text-terracotta">3</span>
-            <span class="text-[10px] text-muted mt-0.5">OPEN</span>
-          </button>
-          <button type="button" onclick="revealMysteryEmoji(4)" id="mystery-btn-4" class="mystery-card aspect-square rounded-2xl bg-white border-2 border-sand flex flex-col items-center justify-center shadow-xs cursor-pointer">
-            <span class="font-rounded text-xl sm:text-2xl font-bold text-terracotta">4</span>
-            <span class="text-[10px] text-muted mt-0.5">OPEN</span>
-          </button>
-          <button type="button" onclick="revealMysteryEmoji(5)" id="mystery-btn-5" class="mystery-card aspect-square rounded-2xl bg-white border-2 border-sand flex flex-col items-center justify-center shadow-xs cursor-pointer">
-            <span class="font-rounded text-xl sm:text-2xl font-bold text-terracotta">5</span>
-            <span class="text-[10px] text-muted mt-0.5">OPEN</span>
-          </button>
-        </div>
-
-        <!-- Revealed Emoji Postcard Box (Hidden until a number is picked) -->
-        <div id="emoji-reveal-card" class="hidden bg-cream rounded-2xl p-6 postcard-border shadow-inner mb-5">
-          <p id="revealed-number-label" class="text-xs font-bold tracking-wider text-terracotta mb-2">
-            NO.1 の絵文字がオープン！
-          </p>
-          <div id="revealed-emoji-icon" class="text-6xl my-3 animate-pop select-none">
-            🌱
-          </div>
-          <p id="revealed-emoji-message" class="font-rounded text-base font-bold text-charcoal leading-relaxed mt-2">
-            新しい芽吹き！これからもよろしくね🌱
-          </p>
-        </div>
-
-        <!-- Subtle Retake Link -->
-        <button
-          type="button"
-          onclick="resetQuiz()"
-          class="text-xs text-muted/80 hover:text-charcoal underline underline-offset-4 transition cursor-pointer mt-2"
-        >
-          最初からやり直す
-        </button>
-      </section>
-
-    </div>
-
-    <!-- Subtle Footer (© 2026 is the completely disguised creator trigger) -->
-    <footer class="flex items-center justify-center gap-1.5 mt-5 px-2 text-xs text-muted/60 select-none">
-      <span>友達からのちょっとした質問状</span>
-      <span
-        onclick="openPasswordModal()"
-        ondblclick="openPasswordModal()"
-        style="cursor: default;"
-        class="px-1"
-      >© 2026</span>
-    </footer>
-  </main>
-
-  <!-- ==================== SECRET PASSWORD MODAL ==================== -->
-  <div id="password-modal" class="hidden fixed inset-0 z-50 bg-charcoal/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-[#FFFDF9] w-full max-w-xs rounded-3xl shadow-2xl border border-sand p-6 text-center animate-card">
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-terracotta/15 text-terracotta text-xl mb-3">
-        🔒
-      </div>
-      <h3 class="font-rounded text-lg font-bold text-charcoal mb-1">
-        作成者認証
-      </h3>
-      <p class="text-xs text-muted mb-4">
-        回答ボックスを開くにはパスワードを入力してください
-      </p>
-
-      <input
-        type="password"
-        id="admin-password-input"
-        inputmode="numeric"
-        maxlength="20"
-        placeholder="パスワードを入力"
-        onkeydown="if(event.key === 'Enter') verifyCreatorPassword()"
-        class="w-full bg-cream border-2 border-sand focus:border-terracotta rounded-xl px-4 py-2.5 text-center text-base tracking-widest text-charcoal outline-none transition mb-2"
-      >
-      <p id="password-error-msg" class="hidden text-xs text-terracotta font-medium mb-3">
-        パスワードが正しくありません
-      </p>
-
-      <div class="flex gap-2 mt-3">
-        <button
-          type="button"
-          onclick="closePasswordModal()"
-          class="flex-1 py-2.5 rounded-xl border border-sand text-muted hover:bg-sand/50 text-xs font-bold transition cursor-pointer"
-        >
-          キャンセル
-        </button>
-        <button
-          type="button"
-          onclick="verifyCreatorPassword()"
-          class="flex-1 py-2.5 rounded-xl bg-terracotta hover:bg-terracottaDark text-white text-xs font-bold shadow-xs transition cursor-pointer"
-        >
-          開く
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== CREATOR RESULTS DASHBOARD MODAL ==================== -->
-  <div id="creator-modal" class="hidden fixed inset-0 z-40 bg-charcoal/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-    <div class="bg-[#FFFDF9] w-full max-w-2xl rounded-3xl shadow-2xl border border-sand overflow-hidden my-auto animate-card flex flex-col max-h-[90vh]">
-
-      <!-- Modal Header -->
-      <div class="bg-cream border-b border-sand px-5 sm:px-7 py-4 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-2.5">
-          <span class="w-9 h-9 rounded-xl bg-terracotta/15 text-terracotta flex items-center justify-center text-lg">📬</span>
-          <div>
-            <h3 class="font-rounded text-lg font-bold text-charcoal leading-tight">
-              回答ボックス（作成者用）
-            </h3>
-            <p class="text-[11px] text-muted flex items-center gap-1.5">
-              <span id="sync-status-dot" class="w-2 h-2 rounded-full bg-sage inline-block"></span>
-              <span id="sync-status-text">同期準備完了</span>
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onclick="closeCreatorDashboard()"
-          class="w-9 h-9 rounded-full bg-sand/70 hover:bg-sand text-charcoal flex items-center justify-center transition cursor-pointer"
-          aria-label="閉じる"
-        >
-          ✕
-        </button>
-      </div>
-
-      <!-- Creator Action Toolbar -->
-      <div class="bg-cream/60 border-b border-sand px-5 sm:px-7 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-bold text-charcoal bg-white border border-sand px-3 py-1.5 rounded-xl">
-            合計：<span id="total-responses-count" class="text-terracotta">0</span> 件
-          </span>
-          <button
-            type="button"
-            onclick="toggleSettingsPanel('password-settings-panel')"
-            class="text-xs font-medium text-charcoal bg-white hover:bg-sand/50 border border-sand px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer"
-          >
-            <span>🔑</span>
-            <span>パスワード変更</span>
-          </button>
-          <button
-            type="button"
-            onclick="toggleSettingsPanel('webhook-panel')"
-            class="text-xs font-medium text-charcoal bg-white hover:bg-sand/50 border border-sand px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer"
-          >
-            <span>🔗</span>
-            <span>外部連携</span>
-          </button>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            onclick="copyAllResponses()"
-            class="text-xs font-bold text-white bg-terracotta hover:bg-terracottaDark px-3.5 py-1.5 rounded-xl shadow-xs transition cursor-pointer"
-          >
-            📋 すべてコピー
-          </button>
-          <button
-            type="button"
-            onclick="exportResponsesCSV()"
-            class="text-xs font-bold text-charcoal bg-sand hover:bg-sand/80 px-3 py-1.5 rounded-xl transition cursor-pointer"
-          >
-            📥 CSV出力
-          </button>
-        </div>
-      </div>
-
-      <!-- Collapsible Password Change Panel -->
-      <div id="password-settings-panel" class="hidden bg-sand/40 border-b border-sand px-5 sm:px-7 py-4 shrink-0">
-        <div class="bg-white rounded-2xl p-4 border border-sand">
-          <h4 class="font-rounded text-sm font-bold text-charcoal mb-1">🔑 作成者パスワードの変更</h4>
-          <p class="text-xs text-muted mb-3">
-            回答ボックスを開く際の新しいパスワードを設定できます（初期パスワード：2026）。
-          </p>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <input
-              type="text"
-              id="new-admin-password-input"
-              maxlength="20"
-              placeholder="新しいパスワードを入力"
-              class="flex-1 bg-cream border border-sand focus:border-terracotta rounded-xl px-3 py-2 text-xs text-charcoal outline-none"
-            >
-            <button
-              type="button"
-              onclick="saveNewAdminPassword()"
-              class="bg-terracotta hover:bg-terracottaDark text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer shrink-0"
-            >
-              パスワードを更新
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Collapsible Webhook Integration Panel -->
-      <div id="webhook-panel" class="hidden bg-sand/40 border-b border-sand px-5 sm:px-7 py-4 shrink-0">
-        <div class="bg-white rounded-2xl p-4 border border-sand">
-          <h4 class="font-rounded text-sm font-bold text-charcoal">🔗 外部通知・Google Apps Script / Webhook連携（任意）</h4>
-          <p class="text-xs text-muted mt-0.5 mb-3 leading-relaxed">
-            Webhook URLを設定すると、友達が回答を完了した瞬間に自動でJSONデータも転送されます。
-          </p>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <input
-              type="url"
-              id="webhook-url-input"
-              placeholder="https://script.google.com/macros/s/.../exec"
-              class="flex-1 bg-cream border border-sand focus:border-terracotta rounded-xl px-3 py-2 text-xs text-charcoal outline-none"
-            >
-            <button
-              type="button"
-              onclick="saveWebhookSettings()"
-              class="bg-sage hover:opacity-90 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer shrink-0"
-            >
-              設定を保存
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Responses List Body -->
-      <div id="responses-container" class="p-5 sm:p-7 overflow-y-auto space-y-4 flex-1 bg-cream/30">
-        <div id="empty-responses" class="text-center py-12">
-          <div class="text-4xl mb-3">📭</div>
-          <p class="font-rounded font-bold text-charcoal text-base mb-1">まだ回答は届いていません</p>
-          <p class="text-xs text-muted leading-relaxed">
-            このページのURLを友達に送ってみよう！<br>
-            友達が最後まで回答すると、ここに自動で記録されます。
-          </p>
-        </div>
-
-        <div id="responses-list" class="space-y-4"></div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Standard Interactive Quiz Script (Runs immediately without blocking on cloud init) -->
   <script>
-    // Mystery Emoji Mapping (1 to 5: 🌱🍀🫧🌙🌻)
-    const MYSTERY_EMOJIS = {
-      1: {
-        emoji: '🌱',
-        message: '新しい芽吹き！これからもよろしくね🌱'
-      },
-      2: {
-        emoji: '🍀',
-        message: '四つ葉のクローバー！いいことありますように🍀'
-      },
-      3: {
-        emoji: '🫧',
-        message: 'ぷかぷかリラックス！いつもありがとう🫧'
-      },
-      4: {
-        emoji: '🌙',
-        message: '穏やかな夜空！ゆっくり休んでね🌙'
-      },
-      5: {
-        emoji: '🌻',
-        message: 'ひまわりみたいに笑顔あふれる毎日を！🌻'
-      }
-    };
+    const answers = { q1: "", q2: "まあまあ (50%)", q3: "", q4: "", q5: "", emoji: "" };
+    // 【重要】這裡已經換成你專屬的 Google Apps Script 網址
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeuFo-u_6iUdLEThAcfQIs3hi2EcRlny19TlSz5j1gpY3Yngp_DC3ZY9J4eqePwdlt_A/exec";
 
-    // Quiz State
-    const quizState = {
-      step: 0,
-      friendName: '',
-      q1Choice: '',
-      q1Custom: '',
-      q2Value: 50,
-      q3Choice: '',
-      q4Choice: '',
-      q5Text: '',
-      pickedNumber: null,
-      pickedEmoji: '',
-      currentDocId: null,
-      currentLocalId: null
-    };
-
-    window.quizState = quizState;
-    window.allResponses = [];
-    window.creatorPassword = '2026';
-    window.webhookUrl = '';
-
-    // Toast Helper
-    let toastTimeout;
-    function showToast(message, icon = '✨') {
-      const toast = document.getElementById('toast');
-      document.getElementById('toast-message').textContent = message;
-      document.getElementById('toast-icon').textContent = icon;
-
-      toast.classList.remove('opacity-0', '-translate-y-2');
-      toast.classList.add('opacity-100', 'translate-y-0');
-
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
-        toast.classList.remove('opacity-100', 'translate-y-0');
-        toast.classList.add('opacity-0', '-translate-y-2');
-      }, 2800);
+    function nextStep(step) {
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+      document.getElementById(`step-${step}`).classList.add('active');
     }
 
-    // Step Navigation
-    function goToStep(stepIndex) {
-      quizState.step = stepIndex;
+    function selectOption(qNumber, value) {
+      const card = document.getElementById(`step-${qNumber}`);
+      const buttons = card.querySelectorAll('.option-btn');
+      const otherInput = document.getElementById(`q${qNumber}-other`);
+      
+      buttons.forEach(btn => btn.classList.remove('selected'));
+      event.target.classList.add('selected');
 
-      const screens = ['screen-intro', 'screen-q1', 'screen-q2', 'screen-q3', 'screen-q4', 'screen-q5', 'screen-result'];
-      screens.forEach((id) => {
-        const el = document.getElementById(id);
-        el.classList.add('hidden');
-        el.classList.remove('animate-card');
-        void el.offsetWidth;
-        el.classList.add('animate-card');
-      });
-
-      const progressHeader = document.getElementById('progress-header');
-      if (stepIndex >= 1 && stepIndex <= 5) {
-        progressHeader.classList.remove('hidden');
-        const percent = stepIndex * 20;
-        document.getElementById('step-label').textContent = `質問 ${stepIndex} / 全 5 問`;
-        document.getElementById('step-percent').textContent = `${percent}%`;
-        document.getElementById('progress-bar').style.width = `${percent}%`;
+      if (value === 'other') {
+        if(otherInput) otherInput.style.display = 'block';
+        answers[`q${qNumber}`] = otherInput ? otherInput.value : "";
       } else {
-        progressHeader.classList.add('hidden');
+        if(otherInput) otherInput.style.display = 'none';
+        answers[`q${qNumber}`] = value;
       }
-
-      if (stepIndex === 0) document.getElementById('screen-intro').classList.remove('hidden');
-      if (stepIndex === 1) document.getElementById('screen-q1').classList.remove('hidden');
-      if (stepIndex === 2) document.getElementById('screen-q2').classList.remove('hidden');
-      if (stepIndex === 3) document.getElementById('screen-q3').classList.remove('hidden');
-      if (stepIndex === 4) document.getElementById('screen-q4').classList.remove('hidden');
-      if (stepIndex === 5) document.getElementById('screen-q5').classList.remove('hidden');
-      if (stepIndex === 6) document.getElementById('screen-result').classList.remove('hidden');
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      checkInput(qNumber, value);
     }
 
-    function startQuiz() {
-      quizState.friendName = document.getElementById('friend-name').value.trim();
-      goToStep(1);
-    }
+    function checkInput(qNumber, value) {
+      const btn = document.getElementById(`btn-${qNumber}`);
+      if (!btn) return;
 
-    // Q1 Selection
-    function selectQ1(val) {
-      quizState.q1Choice = val;
-      document.querySelectorAll('#q1-options .option-card').forEach((btn) => {
-        btn.classList.toggle('selected', btn.dataset.val === val);
-      });
-
-      const customWrap = document.getElementById('q1-custom-wrap');
-      if (val === 'その他') {
-        customWrap.classList.remove('hidden');
-        document.getElementById('q1-custom-input').focus();
-      } else {
-        customWrap.classList.add('hidden');
-      }
-    }
-
-    function nextFromQ1() {
-      if (!quizState.q1Choice) {
-        showToast('行きたい場所を1つ選んでね！', '🌿');
-        return;
-      }
-      if (quizState.q1Choice === 'その他') {
-        const customText = document.getElementById('q1-custom-input').value.trim();
-        if (!customText) {
-          showToast('行きたい場所を入力してね！', '✏️');
-          document.getElementById('q1-custom-input').focus();
-          return;
+      if (qNumber === 1) {
+        const otherInput = document.getElementById('q1-other');
+        if (otherInput.style.display === 'block') {
+          answers.q1 = otherInput.value;
+          btn.disabled = otherInput.value.trim() === "";
+        } else {
+          btn.disabled = false;
         }
-        quizState.q1Custom = customText;
-      }
-      goToStep(2);
-    }
-
-    // Q2 Slider Feedback
-    function getSliderFeedback(val) {
-      const num = parseInt(val, 10);
-      if (num <= 20) {
-        return { emoji: '🔋', text: '「今は一人の時間が大切かも？」' };
-      } else if (num <= 50) {
-        return { emoji: '🙂', text: '「タイミングが合えば！」' };
-      } else if (num <= 80) {
-        return { emoji: '😊', text: '「ぜひ一緒に遊びたい！」' };
       } else {
-        return { emoji: '🤩', text: '「今すぐ予定を立てたいレベル！」' };
+        btn.disabled = false;
       }
     }
 
     function updateSlider(val) {
-      quizState.q2Value = parseInt(val, 10);
-      document.getElementById('q2-value-display').textContent = quizState.q2Value;
-
-      const feedback = getSliderFeedback(quizState.q2Value);
-      document.getElementById('q2-emoji').textContent = feedback.emoji;
-      document.getElementById('q2-mood-text').textContent = feedback.text;
-
-      const slider = document.getElementById('q2-slider');
-      slider.style.background = `linear-gradient(to right, #D97757 0%, #D97757 ${val}%, #E6DFD3 ${val}%, #E6DFD3 100%)`;
+      let text = "";
+      if(val < 20) text = "全然思わない";
+      else if(val < 40) text = "あまり思わない";
+      else if(val < 60) text = "まあまあ";
+      else if(val < 80) text = "したい！";
+      else text = "超したい！";
+      
+      document.getElementById('slider-value-text').innerText = `${text} (${val}%)`;
+      answers.q2 = `${text} (${val}%)`;
     }
 
-    updateSlider(50);
-
-    // Q3 & Q4 Selection
-    function selectSingleOption(questionKey, val) {
-      if (questionKey === 'q3') quizState.q3Choice = val;
-      if (questionKey === 'q4') quizState.q4Choice = val;
-
-      const containerId = questionKey === 'q3' ? '#q3-options' : '#q4-options';
-      document.querySelectorAll(`${containerId} .option-card`).forEach((btn) => {
-        btn.classList.toggle('selected', btn.dataset.val === val);
-      });
+    // 點擊「回答を完了する」後執行：切換到數字頁並在背景發送資料
+    function submitAndNext() {
+      const q5val = document.getElementById('q5-text').value;
+      answers.q5 = q5val.trim() === "" ? "(無填寫)" : q5val;
+      
+      // 先切換畫面讓朋友選數字
+      nextStep(6);
+      
+      // 在背景靜默傳送資料給 Google 試算表（朋友不會發現）
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors', // 避免跨網域阻擋
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answers)
+      }).catch(err => console.log('Background save error', err));
     }
 
-    function nextFromQ3() {
-      if (!quizState.q3Choice) {
-        showToast('どれか1つ選択してね！', '💭');
-        return;
-      }
-      goToStep(4);
+    // 朋友點擊數字後執行：顯示 Emoji 並補傳抽中的 Emoji 給 Google（可選）
+    function revealEmoji(number, emoji) {
+      answers.emoji = `選了 ${number}號: ${emoji}`;
+      document.getElementById('final-emoji').innerText = emoji;
+      
+      let msg = "";
+      if(emoji === '🌱') msg = "新しい何かが始まりそうな予感！<br>自分のペースですくすく育ってね。";
+      if(emoji === '🍀') msg = "ラッキーなことが起こるかも！<br>小さな幸せを見つけられますように。";
+      if(emoji === '🫧') msg = "心がふわっと軽くなるような<br>癒しの時間が訪れますように。";
+      if(emoji === '🌙') msg = "今日もお疲れ様。<br>ゆっくり休んで素敵な夢を見てね。";
+      if(emoji === '🌻') msg = "あなたらしい笑顔が一番！<br>いつも明るいパワーをありがとう。";
+      
+      document.getElementById('final-message').innerHTML = msg;
+      nextStep(7);
+      
+      // 補傳一次完整資料（含最後抽出的 Emoji）
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answers)
+      }).catch(err => console.log(err));
     }
-
-    function nextFromQ4() {
-      if (!quizState.q4Choice) {
-        showToast('今の気持ちに一番近いものを選んでね！', '💬');
-        return;
-      }
-      goToStep(5);
-    }
-
-    function updateCharCount(textarea) {
-      document.getElementById('char-count').textContent = textarea.value.length;
-    }
-
-    function formatJapaneseTime(dateObj) {
-      const y = dateObj.getFullYear();
-      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const d = String(dateObj.getDate()).padStart(2, '0');
-      const hh = String(dateObj.getHours()).padStart(2, '0');
-      const mm = String(dateObj.getMinutes()).padStart(2, '0');
-      return `${y}/${m}/${d} ${hh}:${mm}`;
-    }
-
-    // Complete Quiz Silently & Transition to 1-5 Emoji Mystery Screen
-    async function completeQuizSilently() {
-      quizState.q5Text = document.getElementById('q5-textarea').value.trim();
-
-      const now = new Date();
-      const displayName = quizState.friendName || '匿名の友達';
-      const q1Final = quizState.q1Choice === 'その他' ? `その他（${quizState.q1Custom}）` : quizState.q1Choice;
-      const sliderFeedback = getSliderFeedback(quizState.q2Value);
-      const localId = 'resp_' + now.getTime();
-      quizState.currentLocalId = localId;
-
-      const payload = {
-        localId: localId,
-        friendName: displayName,
-        q1: q1Final,
-        q2Score: quizState.q2Value,
-        q2Label: `${quizState.q2Value}% ${sliderFeedback.text}`,
-        q3: quizState.q3Choice,
-        q4: quizState.q4Choice,
-        q5: quizState.q5Text || '（メッセージなし）',
-        pickedEmoji: '未選択',
-        timestamp: formatJapaneseTime(now),
-        createdAtMs: now.getTime()
-      };
-
-      // Reset mystery box UI before showing final screen
-      resetMysteryBoxUI();
-      goToStep(6);
-
-      // Save silently in background (Firestore + in-memory backup)
-      if (typeof window.saveQuizResponseToCloud === 'function') {
-        window.saveQuizResponseToCloud(payload);
-      } else {
-        window.allResponses.unshift(payload);
-      }
-    }
-
-    // Mystery Box 1–5 Reveal Interaction
-    function resetMysteryBoxUI() {
-      quizState.pickedNumber = null;
-      quizState.pickedEmoji = '';
-      document.getElementById('emoji-reveal-card').classList.add('hidden');
-      for (let i = 1; i <= 5; i++) {
-        const btn = document.getElementById(`mystery-btn-${i}`);
-        btn.disabled = false;
-        btn.classList.remove('opacity-45', 'border-terracotta', 'bg-[#FFF6F2]', 'scale-105');
-        btn.classList.add('bg-white', 'border-sand');
-        btn.innerHTML = `
-          <span class="font-rounded text-xl sm:text-2xl font-bold text-terracotta">${i}</span>
-          <span class="text-[10px] text-muted mt-0.5">OPEN</span>
-        `;
-      }
-    }
-
-    function revealMysteryEmoji(num) {
-      if (quizState.pickedNumber !== null) return; // Lock after single pick
-      const item = MYSTERY_EMOJIS[num];
-      if (!item) return;
-
-      quizState.pickedNumber = num;
-      quizState.pickedEmoji = `${num}番（${item.emoji}）`;
-
-      // Update all 5 buttons visually
-      for (let i = 1; i <= 5; i++) {
-        const btn = document.getElementById(`mystery-btn-${i}`);
-        btn.disabled = true;
-        if (i === num) {
-          btn.classList.remove('bg-white', 'border-sand');
-          btn.classList.add('border-terracotta', 'bg-[#FFF6F2]', 'scale-105');
-          btn.innerHTML = `
-            <span class="text-2xl sm:text-3xl animate-pop">${item.emoji}</span>
-            <span class="text-[10px] font-bold text-terracotta mt-0.5">NO.${i}</span>
-          `;
-        } else {
-          btn.classList.add('opacity-45');
-        }
-      }
-
-      // Show Postcard Reveal Box
-      const revealCard = document.getElementById('emoji-reveal-card');
-      document.getElementById('revealed-number-label').textContent = `NO.${num} の絵文字がオープン！`;
-      const iconEl = document.getElementById('revealed-emoji-icon');
-      iconEl.textContent = item.emoji;
-      iconEl.classList.remove('animate-pop');
-      void iconEl.offsetWidth;
-      iconEl.classList.add('animate-pop');
-
-      document.getElementById('revealed-emoji-message').textContent = item.message;
-      revealCard.classList.remove('hidden');
-      revealCard.classList.remove('animate-card');
-      void revealCard.offsetWidth;
-      revealCard.classList.add('animate-card');
-
-      // Silently update picked emoji in saved response
-      if (typeof window.updatePickedEmojiInCloud === 'function') {
-        window.updatePickedEmojiInCloud(quizState.currentDocId, quizState.currentLocalId, quizState.pickedEmoji);
-      }
-    }
-
-    // Reset Entire Quiz
-    function resetQuiz() {
-      quizState.q1Choice = '';
-      quizState.q1Custom = '';
-      quizState.q2Value = 50;
-      quizState.q3Choice = '';
-      quizState.q4Choice = '';
-      quizState.q5Text = '';
-      quizState.pickedNumber = null;
-      quizState.pickedEmoji = '';
-      quizState.currentDocId = null;
-
-      document.querySelectorAll('.option-card').forEach((btn) => btn.classList.remove('selected'));
-      document.getElementById('q1-custom-wrap').classList.add('hidden');
-      document.getElementById('q1-custom-input').value = '';
-      document.getElementById('q2-slider').value = 50;
-      updateSlider(50);
-      document.getElementById('q5-textarea').value = '';
-      document.getElementById('char-count').textContent = '0';
-      resetMysteryBoxUI();
-
-      goToStep(0);
-    }
-
-    // Password & Creator Dashboard UI Helpers
-    function openPasswordModal() {
-      const input = document.getElementById('admin-password-input');
-      const errEl = document.getElementById('password-error-msg');
-      input.value = '';
-      errEl.classList.add('hidden');
-      document.getElementById('password-modal').classList.remove('hidden');
-      setTimeout(() => input.focus(), 50);
-    }
-
-    function closePasswordModal() {
-      document.getElementById('password-modal').classList.add('hidden');
-    }
-
-    function verifyCreatorPassword() {
-      const entered = document.getElementById('admin-password-input').value.trim();
-      const errEl = document.getElementById('password-error-msg');
-      if (entered === window.creatorPassword) {
-        closePasswordModal();
-        openCreatorDashboard();
-      } else {
-        errEl.classList.remove('hidden');
-        document.getElementById('admin-password-input').select();
-      }
-    }
-
-    function openCreatorDashboard() {
-      renderCreatorResponses();
-      document.getElementById('creator-modal').classList.remove('hidden');
-    }
-
-    function closeCreatorDashboard() {
-      document.getElementById('creator-modal').classList.add('hidden');
-    }
-
-    function toggleSettingsPanel(panelId) {
-      const target = document.getElementById(panelId);
-      const otherId = panelId === 'webhook-panel' ? 'password-settings-panel' : 'webhook-panel';
-      document.getElementById(otherId).classList.add('hidden');
-      target.classList.toggle('hidden');
-    }
-
-    function escapeHTML(str) {
-      return String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-
-    function renderCreatorResponses() {
-      const list = window.allResponses || [];
-      const count = list.length;
-      document.getElementById('total-responses-count').textContent = count;
-
-      const emptyEl = document.getElementById('empty-responses');
-      const listEl = document.getElementById('responses-list');
-
-      if (count === 0) {
-        emptyEl.classList.remove('hidden');
-        listEl.innerHTML = '';
-        return;
-      }
-
-      emptyEl.classList.add('hidden');
-      listEl.innerHTML = list
-        .map((item, idx) => {
-          const deleteBtn = item.docId
-            ? `<button type="button" onclick="deleteResponseFromCloud('${escapeHTML(item.docId)}')" class="text-[11px] text-muted hover:text-terracotta transition cursor-pointer ml-2" title="削除">🗑️</button>`
-            : '';
-          return `
-            <div class="bg-white rounded-2xl p-5 border border-sand shadow-xs relative overflow-hidden">
-              <div class="flex items-center justify-between border-b border-sand pb-3 mb-3">
-                <div class="flex items-center gap-2">
-                  <span class="bg-terracotta/15 text-terracotta text-xs font-bold px-2.5 py-0.5 rounded-full">#${count - idx}</span>
-                  <span class="font-rounded font-bold text-charcoal text-base">${escapeHTML(item.friendName)}</span>
-                  <span class="text-xs bg-sage/15 text-sage font-bold px-2 py-0.5 rounded-full">${escapeHTML(item.pickedEmoji || '未選択')}</span>
-                </div>
-                <div class="flex items-center">
-                  <span class="text-[11px] text-muted">${escapeHTML(item.timestamp || '')}</span>
-                  ${deleteBtn}
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs mb-2.5">
-                <div class="bg-cream/80 rounded-xl p-2.5">
-                  <p class="text-muted mb-0.5">Q1. 一段落したら行きたい場所</p>
-                  <p class="font-bold text-charcoal text-sm">${escapeHTML(item.q1)}</p>
-                </div>
-                <div class="bg-cream/80 rounded-xl p-2.5">
-                  <p class="text-muted mb-0.5">Q2. 一緒に何かやりたい度</p>
-                  <p class="font-bold text-terracotta text-sm">${escapeHTML(item.q2Label)}</p>
-                </div>
-              </div>
-
-              <div class="space-y-2 text-xs">
-                <div class="bg-cream/80 rounded-xl p-2.5">
-                  <p class="text-muted mb-0.5">Q3. ケンカしたら仲直りしたい？</p>
-                  <p class="font-bold text-charcoal">${escapeHTML(item.q3)}</p>
-                </div>
-                <div class="bg-cream/80 rounded-xl p-2.5">
-                  <p class="text-muted mb-0.5">Q4. 最近本音を素直に話せる？</p>
-                  <p class="font-bold text-charcoal">${escapeHTML(item.q4)}</p>
-                </div>
-                <div class="bg-[#FFF8F4] border border-terracotta/20 rounded-xl p-3">
-                  <p class="text-terracotta font-bold mb-1">💌 Q5. 自由メッセージ</p>
-                  <p class="text-charcoal whitespace-pre-wrap leading-relaxed text-xs sm:text-sm">${escapeHTML(item.q5)}</p>
-                </div>
-              </div>
-            </div>
-          `;
-        })
-        .join('');
-    }
-
-    function copyAllResponses() {
-      const list = window.allResponses || [];
-      if (list.length === 0) {
-        showToast('コピーする回答がまだありません', '📭');
-        return;
-      }
-
-      const summary = list
-        .map((r, i) => {
-          return `【回答 ${i + 1}】${r.friendName}（${r.timestamp}）｜選んだ絵文字：${r.pickedEmoji || '未選択'}\n` +
-            `Q1. 行きたい場所：${r.q1}\n` +
-            `Q2. 一緒にしたい度：${r.q2Label}\n` +
-            `Q3. 仲直りしたい？：${r.q3}\n` +
-            `Q4. 本音を話せる？：${r.q4}\n` +
-            `Q5. メッセージ：${r.q5}`;
-        })
-        .join('\n\n------------------------\n\n');
-
-      const textArea = document.createElement('textarea');
-      textArea.value = summary;
-      textArea.style.position = 'fixed';
-      textArea.style.left = '-9999px';
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-
-      try {
-        document.execCommand('copy');
-        showToast('すべての回答をコピーしました！', '📋');
-      } catch (e) {
-        showToast('コピーに失敗しました', '⚠️');
-      }
-      document.body.removeChild(textArea);
-    }
-
-    function exportResponsesCSV() {
-      const list = window.allResponses || [];
-      if (list.length === 0) {
-        showToast('出力する回答がまだありません', '📭');
-        return;
-      }
-
-      const headers = ['送信日時', 'ニックネーム', '選んだ絵文字', 'Q1_行きたい場所', 'Q2_一緒にしたい度', 'Q3_仲直りしたいか', 'Q4_本音を話せるか', 'Q5_自由メッセージ'];
-      const rows = list.map((r) => [
-        r.timestamp || '',
-        r.friendName || '',
-        r.pickedEmoji || '未選択',
-        r.q1 || '',
-        r.q2Label || '',
-        r.q3 || '',
-        r.q4 || '',
-        (r.q5 || '').replace(/\r?\n/g, ' ')
-      ]);
-
-      const csvContent =
-        '\uFEFF' +
-        [headers, ...rows]
-          .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-          .join('\n');
-
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `friend_quiz_results_${new Date().toISOString().slice(0, 10)}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast('CSVファイルをダウンロードしました！', '📥');
-    }
-  </script>
-
-  <!-- Firebase Cloud Sync Module (Isolated so UI works 100% even if offline) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    let db = null;
-    let auth = null;
-    let currentUser = null;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'friend-quiz-jp-auto';
-
-    function updateSyncIndicator(isOnline, label) {
-      const dot = document.getElementById('sync-status-dot');
-      const text = document.getElementById('sync-status-text');
-      if (dot) dot.className = `w-2 h-2 rounded-full inline-block ${isOnline ? 'bg-sage' : 'bg-muted/50'}`;
-      if (text) text.textContent = label;
-    }
-
-    async function initCloudSync() {
-      try {
-        if (typeof __firebase_config === 'undefined' || !__firebase_config) {
-          updateSyncIndicator(false, 'ローカル保存モード');
-          return;
-        }
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
-
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
-
-        onAuthStateChanged(auth, (user) => {
-          currentUser = user;
-          if (user) {
-            updateSyncIndicator(true, 'クラウド自動受信・同期中');
-            subscribeToResponses();
-            loadCreatorSettings();
-          }
-        });
-      } catch (err) {
-        console.warn('Cloud sync fallback:', err);
-        updateSyncIndicator(false, 'ローカル保存モード');
-      }
-    }
-
-    function subscribeToResponses() {
-      if (!db || !currentUser) return;
-      const responsesCol = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_responses');
-      onSnapshot(
-        responsesCol,
-        (snapshot) => {
-          const items = [];
-          snapshot.forEach((docSnap) => {
-            items.push({ docId: docSnap.id, ...docSnap.data() });
-          });
-          items.sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
-          window.allResponses = items;
-          if (typeof renderCreatorResponses === 'function') {
-            renderCreatorResponses();
-          }
-        },
-        (error) => {
-          console.warn('Snapshot listener warning:', error);
-        }
-      );
-    }
-
-    async function loadCreatorSettings() {
-      if (!db || !currentUser) return;
-      try {
-        const webhookDoc = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_settings', 'webhook');
-        const webhookSnap = await getDoc(webhookDoc);
-        if (webhookSnap.exists() && webhookSnap.data().url) {
-          window.webhookUrl = webhookSnap.data().url;
-          const input = document.getElementById('webhook-url-input');
-          if (input) input.value = window.webhookUrl;
-        }
-
-        const passDoc = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_settings', 'auth');
-        const passSnap = await getDoc(passDoc);
-        if (passSnap.exists() && passSnap.data().password) {
-          window.creatorPassword = String(passSnap.data().password);
-        }
-      } catch (e) {
-        console.warn('Settings load skipped:', e);
-      }
-    }
-
-    window.saveQuizResponseToCloud = async function (payload) {
-      window.allResponses.unshift(payload);
-
-      if (db && currentUser) {
-        try {
-          const responsesCol = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_responses');
-          const docRef = await addDoc(responsesCol, payload);
-          window.quizState.currentDocId = docRef.id;
-        } catch (err) {
-          console.warn('Cloud save error:', err);
-        }
-      }
-
-      if (window.webhookUrl) {
-        try {
-          fetch(window.webhookUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          }).catch(() => {});
-        } catch (e) {}
-      }
-    };
-
-    window.updatePickedEmojiInCloud = async function (docId, localId, pickedEmojiLabel) {
-      const localItem = (window.allResponses || []).find((r) => r.localId === localId || (docId && r.docId === docId));
-      if (localItem) {
-        localItem.pickedEmoji = pickedEmojiLabel;
-      }
-
-      if (db && currentUser && docId) {
-        try {
-          const targetDoc = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_responses', docId);
-          await updateDoc(targetDoc, { pickedEmoji: pickedEmojiLabel });
-        } catch (e) {
-          console.warn('Emoji update error:', e);
-        }
-      }
-    };
-
-    window.deleteResponseFromCloud = async function (docId) {
-      if (!db || !currentUser || !docId) return;
-      try {
-        const targetDoc = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_responses', docId);
-        await deleteDoc(targetDoc);
-        showToast('1件の回答を削除しました', '🗑️');
-      } catch (e) {
-        showToast('削除できませんでした', '⚠️');
-      }
-    };
-
-    window.saveNewAdminPassword = async function () {
-      const newPass = document.getElementById('new-admin-password-input').value.trim();
-      if (!newPass) {
-        showToast('新しいパスワードを入力してください', '⚠️');
-        return;
-      }
-      window.creatorPassword = newPass;
-      if (db && currentUser) {
-        try {
-          const passDoc = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_settings', 'auth');
-          await setDoc(passDoc, { password: newPass, updatedAt: new Date().toISOString() });
-          document.getElementById('new-admin-password-input').value = '';
-          showToast('パスワードを更新しました！', '🔑');
-        } catch (e) {
-          showToast('保存中にエラーが発生しました', '⚠️');
-        }
-      } else {
-        document.getElementById('new-admin-password-input').value = '';
-        showToast('パスワードを変更しました！', '🔑');
-      }
-    };
-
-    window.saveWebhookSettings = async function () {
-      const urlVal = document.getElementById('webhook-url-input').value.trim();
-      window.webhookUrl = urlVal;
-      if (db && currentUser) {
-        try {
-          const configDoc = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_settings', 'webhook');
-          await setDoc(configDoc, { url: urlVal, updatedAt: new Date().toISOString() });
-          showToast('連携URLを保存しました！', '🔗');
-        } catch (e) {
-          showToast('保存中にエラーが発生しました', '⚠️');
-        }
-      } else {
-        showToast('連携URLを設定しました！', '🔗');
-      }
-    };
-
-    initCloudSync();
   </script>
 </body>
 </html>
