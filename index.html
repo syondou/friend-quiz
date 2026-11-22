@@ -218,21 +218,49 @@
       <button class="next-btn" id="btn-5" onclick="submitAndNext()">回答を完了する ✨</button>
     </div>
 
-    <!-- Emoji 選擇頁 -->
+   <!-- Step 6: Emoji Selection & Reveal -->
     <div class="card" id="step-6">
-      <div style="margin: auto 0;">
-        <h2 style="text-align:center;">お疲れ様でした！</h2>
-        <p class="subtitle" style="text-align:center; color:var(--text-main); font-size:1rem;">友達が5つの絵文字を用意してくれました。<br>1〜5の中から好きな数字を1つ選んでタップしてね！</p>
-        <div class="emoji-grid">
-          <div class="emoji-card" onclick="revealEmoji(1, '🌱')">1</div>
-          <div class="emoji-card" onclick="revealEmoji(2, '🍀')">2</div>
-          <div class="emoji-card" onclick="revealEmoji(3, '🫧')">3</div>
-          <div class="emoji-card" onclick="revealEmoji(4, '🌙')">4</div>
-          <div class="emoji-card emoji-card-full" onclick="revealEmoji(5, '🌻')">5</div>
+      <div style="text-align:center; margin-bottom:20px;">
+        <div class="icon-box" style="margin:0 auto 12px; background:#F5EAE3; font-size:1.8rem;">🎁</div>
+        <h2>おつかれさまでした！✨</h2>
+      </div>
+      
+      <div class="notice-box">
+        友達が5つの絵文字を用意してくれました。<br>
+        <span>1〜5の中から好きな数字を1つ選んでタップしてね！</span>
+      </div>
+
+      <div class="emoji-grid">
+        <div class="emoji-btn" id="em-btn-1" onclick="revealEmoji(1, '🌱', '新しい芽吹き！これからもよろしくね🌱')">
+          <div class="num" id="em-num-1">1</div><div class="txt" id="em-txt-1">OPEN</div>
         </div>
+        <div class="emoji-btn" id="em-btn-2" onclick="revealEmoji(2, '🍀', '四つ葉のクローバー！いいことありますように🍀')">
+          <div class="num" id="em-num-2">2</div><div class="txt" id="em-txt-2">OPEN</div>
+        </div>
+        <div class="emoji-btn" id="em-btn-3" onclick="revealEmoji(3, '🫧', '心がふわっと軽くなるような癒しの時間を🫧')">
+          <div class="num" id="em-num-3">3</div><div class="txt" id="em-txt-3">OPEN</div>
+        </div>
+        <div class="emoji-btn" id="em-btn-4" onclick="revealEmoji(4, '🌙', '今日もお疲れ様。素敵な夢を見てね🌙')">
+          <div class="num" id="em-num-4">4</div><div class="txt" id="em-txt-4">OPEN</div>
+        </div>
+        <div class="emoji-btn" id="em-btn-5" onclick="revealEmoji(5, '🌻', 'ひまわりみたいに笑顔あふれる毎日を！🌻')">
+          <div class="num" id="em-num-5">5</div><div class="txt" id="em-txt-5">OPEN</div>
+        </div>
+      </div>
+
+      <!-- 開封結果 (クリック後に表示) -->
+      <div class="reveal-box" id="reveal-box">
+        <div class="reveal-title" id="r-title">NO.1 の絵文字がオープン！</div>
+        <div class="reveal-icon" id="r-icon">🌱</div>
+        <div class="reveal-msg" id="r-msg">新しい芽吹き！これからもよろしくね🌱</div>
+      </div>
+      
+      <div class="restart-link" id="restart-link">
+        <a onclick="location.reload()">最初からやり直す</a>
       </div>
     </div>
 
+  </div>
     <!-- 最終結果頁 -->
     <div class="card" id="step-7">
       <div style="text-align:center; margin:auto 0;">
