@@ -73,6 +73,7 @@
 
     /* タグとアイコン */
     .header-top { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px; }
+    .header-left { display: flex; align-items: center; justify-content: flex-start; margin-bottom: 20px; }
     .icon-box { width: 48px; height: 48px; background: #F8EFEB; border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; }
     .tag { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; letter-spacing: 0.05em; }
     .tag-orange { background: var(--tag-orange); color: var(--tag-orange-text); }
@@ -192,15 +193,18 @@
 
     <!-- Step 2: Slider -->
     <div class="card" id="step-2">
-      <h2>このテストを送ってくれた人と、何か一緒にやりたいことはある？</h2>
-      <p class="subtitle" style="margin-bottom:12px;">スライダーを左右に動かして、今の気分に一番近いところを選んでね！</p>
+      <div class="header-left">
+        <div class="tag tag-green">QUESTION 02</div>
+      </div>
+      <h2 style="text-align:left;">このテストを送ってくれた人と、何か一緒にやりたいことはある？</h2>
+      <p class="subtitle" style="margin-bottom:12px; text-align:left;">スライダーを左右に動かして、今の気分に一番近いところを選んでね！</p>
       
       <div class="slider-card">
-        <div class="slider-emoji" id="s-emoji">🙂</div>
-        <div class="slider-badge"><span id="s-pct">50</span><span style="font-size:0.7em;">%</span></div>
+        <div class="slider-emoji" id="s-emoji">😳</div>
+        <div class="slider-badge"><span id="s-pct">25</span><span style="font-size:0.7em;">%</span></div>
         <div class="slider-text" id="s-text">「タイミングが合えば！」</div>
         
-        <input type="range" id="q2-slider" min="0" max="100" value="50" oninput="updateSlider(this.value)">
+        <input type="range" id="q2-slider" min="0" max="100" value="25" oninput="updateSlider(this.value)">
         <div class="slider-labels">
           <span>したくない</span>
           <span>すごくしたい</span>
@@ -245,7 +249,7 @@
 
     <!-- Step 5: Textarea -->
     <div class="card" id="step-5">
-      <div class="header-top" style="justify-content:flex-start;">
+      <div class="header-left">
         <div class="tag tag-green">FINAL QUESTION</div>
       </div>
       <h2 style="text-align:left;">これが最後の質問です。伝えたいことがあれば自由に書いてね</h2>
@@ -292,7 +296,7 @@
         </div>
       </div>
 
-      <!-- 開封結果 (クリック後に表示) -->
+      <!-- 開封結果 -->
       <div class="reveal-box" id="reveal-box">
         <div class="reveal-title" id="r-title">NO.1 の絵文字がオープン！</div>
         <div class="reveal-icon" id="r-icon">🌱</div>
@@ -307,15 +311,12 @@
   </div>
 
   <script>
-    const answers = { name: "", q1: "", q2: "🙂 50% (タイミングが合えば！)", q3: "", q4: "", q5: "", emoji: "" };
+    const answers = { name: "", q1: "", q2: "😳 25% (タイミングが合えば！)", q3: "", q4: "", q5: "", emoji: "" };
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeuFo-u_6iUdLEThAcfQIs3hi2EcRlny19TlSz5j1gpY3Yngp_DC3ZY9J4eqePwdlt_A/exec";
 
-    // スライダーの背景グラデーションを初期化
     window.onload = () => { updateSliderBg(document.getElementById('q2-slider')); };
 
-    function checkName() {
-      // 任意なのでボタンの無効化はしない設定にしました
-    }
+    function checkName() {}
 
     function startQuiz() {
       const nameInput = document.getElementById('friend-name').value.trim();
@@ -370,12 +371,16 @@
     function updateSlider(val) {
       updateSliderBg(document.getElementById('q2-slider'));
       
-      let e = "🙂", text = "「タイミングが合えば！」";
-      if(val < 20)      { e = "🙅‍♀️"; text = "「今はいいかな…」"; }
-      else if(val < 40) { e = "🤔"; text = "「気が向いたら」"; }
-      else if(val < 60) { e = "🙂"; text = "「タイミングが合えば！」"; }
-      else if(val < 80) { e = "😆"; text = "「ぜひぜひ！」"; }
-      else              { e = "😍"; text = "「絶対に！」"; }
+      let e, text;
+      if (val < 25) { 
+        e = "🔋"; text = "「今は一人の時間が大切かも？」"; 
+      } else if (val < 50) { 
+        e = "😳"; text = "「タイミングが合えば！」"; 
+      } else if (val < 75) { 
+        e = "😊"; text = "「ぜひ一緒に遊びたい！」"; 
+      } else { 
+        e = "🤩"; text = "「今すぐ予定を立てたいレベル！」"; 
+      }
       
       document.getElementById('s-emoji').innerText = e;
       document.getElementById('s-pct').innerText = val;
@@ -405,7 +410,6 @@
       
       nextStep(6);
       
-      // バックグラウンドで送信
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -416,10 +420,9 @@
 
     let isRevealed = false;
     function revealEmoji(number, emoji, msg) {
-      if(isRevealed) return; // 1回だけ引けるようにする
+      if(isRevealed) return;
       isRevealed = true;
       
-      // ボタンのスタイル変更
       document.querySelectorAll('.emoji-btn').forEach(b => b.style.opacity = '0.5');
       const activeBtn = document.getElementById(`em-btn-${number}`);
       activeBtn.style.opacity = '1';
@@ -427,7 +430,6 @@
       document.getElementById(`em-num-${number}`).innerText = emoji;
       document.getElementById(`em-txt-${number}`).innerText = `NO.${number}`;
       
-      // 枠の表示
       document.getElementById('r-title').innerText = `NO.${number} の絵文字がオープン！`;
       document.getElementById('r-icon').innerText = emoji;
       document.getElementById('r-msg').innerText = msg;
@@ -435,7 +437,6 @@
       document.getElementById('reveal-box').classList.add('show');
       document.getElementById('restart-link').classList.add('show');
 
-      // 結果を追記送信
       answers.emoji = `NO.${number} ${emoji}`;
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
