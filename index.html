@@ -143,22 +143,21 @@
       0% { transform: scale(0.5); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
-
-    footer { text-align: center; padding: 15px; font-size: 0.8rem; color: #ccc; }
   </style>
 </head>
 <body>
 
   <div class="container">
     
-    <!-- 歡迎頁 -->
+    <!-- 歡迎頁 (新增輸入名字) -->
     <div class="card active" id="step-0">
       <div style="text-align:center; margin:auto 0;">
         <div style="font-size:3rem; margin-bottom:20px;">💌</div>
         <h2>友達からの<br>ちょっとした質問状</h2>
-        <p class="subtitle">5つの簡単な質問です。<br>直感で答えてみてね！</p>
+        <p class="subtitle">5つの簡単な質問です。<br>まずは、あなたの名前を教えてね！</p>
+        <input type="text" id="friend-name" placeholder="名前やニックネームを入力" oninput="checkName()">
       </div>
-      <button class="next-btn" onclick="nextStep(1)">はじめる ✨</button>
+      <button class="next-btn" id="btn-start" disabled onclick="startQuiz()">はじめる ✨</button>
     </div>
 
     <!-- Q1 -->
@@ -174,16 +173,16 @@
       <button class="next-btn" id="btn-1" disabled onclick="nextStep(2)">次へ</button>
     </div>
 
-    <!-- Q2 -->
+    <!-- Q2 (還原帶有顏文字的滑動條) -->
     <div class="card" id="step-2">
       <p class="subtitle">質問 2 / 5</p>
       <h2>この質問状を送ってくれた人と、何か一緒にアクティビティをしたい？</h2>
       <div class="slider-container">
-        <span id="slider-value-text">まあまあ (50%)</span>
+        <span id="slider-value-text">🙂 まあまあ (50%)</span>
         <input type="range" id="q2-slider" min="0" max="100" value="50" oninput="updateSlider(this.value)">
         <div class="slider-labels">
-          <span>全然思わない</span>
-          <span>超したい！</span>
+          <span>🙅‍♀️ 全然思わない</span>
+          <span>😍 超したい！</span>
         </div>
       </div>
       <button class="next-btn" onclick="nextStep(3)">次へ</button>
@@ -219,7 +218,7 @@
       <button class="next-btn" id="btn-5" onclick="submitAndNext()">回答を完了する ✨</button>
     </div>
 
-    <!-- Emoji 選擇頁 (提交後顯示) -->
+    <!-- Emoji 選擇頁 -->
     <div class="card" id="step-6">
       <div style="margin: auto 0;">
         <h2 style="text-align:center;">お疲れ様でした！</h2>
@@ -241,15 +240,23 @@
         <div class="emoji-result" id="final-emoji"></div>
         <p class="emoji-message" id="final-message"></p>
       </div>
-      <footer>© 2026</footer>
     </div>
 
   </div>
 
   <script>
-    const answers = { q1: "", q2: "まあまあ (50%)", q3: "", q4: "", q5: "", emoji: "" };
-    // 【重要】這裡已經換成你專屬的 Google Apps Script 網址
+    const answers = { name: "", q1: "", q2: "🙂 まあまあ (50%)", q3: "", q4: "", q5: "", emoji: "" };
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeuFo-u_6iUdLEThAcfQIs3hi2EcRlny19TlSz5j1gpY3Yngp_DC3ZY9J4eqePwdlt_A/exec";
+
+    function checkName() {
+      const nameInput = document.getElementById('friend-name').value.trim();
+      document.getElementById('btn-start').disabled = nameInput === "";
+    }
+
+    function startQuiz() {
+      answers.name = document.getElementById('friend-name').value.trim();
+      nextStep(1);
+    }
 
     function nextStep(step) {
       document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
@@ -293,34 +300,30 @@
 
     function updateSlider(val) {
       let text = "";
-      if(val < 20) text = "全然思わない";
-      else if(val < 40) text = "あまり思わない";
-      else if(val < 60) text = "まあまあ";
-      else if(val < 80) text = "したい！";
-      else text = "超したい！";
+      if(val < 20) text = "🙅‍♀️ 全然思わない";
+      else if(val < 40) text = "🤔 あまり思わない";
+      else if(val < 60) text = "🙂 まあまあ";
+      else if(val < 80) text = "😆 したい！";
+      else text = "😍 超したい！";
       
       document.getElementById('slider-value-text').innerText = `${text} (${val}%)`;
       answers.q2 = `${text} (${val}%)`;
     }
 
-    // 點擊「回答を完了する」後執行：切換到數字頁並在背景發送資料
     function submitAndNext() {
       const q5val = document.getElementById('q5-text').value;
       answers.q5 = q5val.trim() === "" ? "(無填寫)" : q5val;
       
-      // 先切換畫面讓朋友選數字
       nextStep(6);
       
-      // 在背景靜默傳送資料給 Google 試算表（朋友不會發現）
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors', // 避免跨網域阻擋
+        mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(answers)
       }).catch(err => console.log('Background save error', err));
     }
 
-    // 朋友點擊數字後執行：顯示 Emoji 並補傳抽中的 Emoji 給 Google（可選）
     function revealEmoji(number, emoji) {
       answers.emoji = `選了 ${number}號: ${emoji}`;
       document.getElementById('final-emoji').innerText = emoji;
@@ -335,7 +338,6 @@
       document.getElementById('final-message').innerHTML = msg;
       nextStep(7);
       
-      // 補傳一次完整資料（含最後抽出的 Emoji）
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
