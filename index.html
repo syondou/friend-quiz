@@ -6,13 +6,17 @@
   <title>友達からのちょっとした質問状 ✉️</title>
   <style>
     :root {
-      --bg-color: #FDFBF7;
+      --bg-color: #F8F5F0;
       --card-bg: #FFFFFF;
-      --primary-color: #E07A5F;
-      --text-main: #3D405B;
-      --text-muted: #81B29A;
-      --border-radius: 16px;
-      --transition-speed: 0.4s;
+      --primary: #D37556;
+      --primary-light: #F4EBE6;
+      --text-main: #333333;
+      --text-muted: #888888;
+      --tag-orange: #F5EAE3;
+      --tag-orange-text: #D37556;
+      --tag-green: #E8F0EA;
+      --tag-green-text: #70987A;
+      --btn-gray: #F7F7F7;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; }
@@ -25,17 +29,20 @@
       align-items: center;
       min-height: 100vh;
       overflow: hidden;
+      position: relative;
     }
+
+    /* 背景の装飾円 */
+    .bg-circle-1 { position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: #EFEBE4; border-radius: 50%; z-index: -1; }
+    .bg-circle-2 { position: absolute; bottom: -80px; left: -80px; width: 250px; height: 250px; background: #F3EBE6; border-radius: 50%; z-index: -1; }
 
     .container {
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       height: 90vh;
-      max-height: 700px;
+      max-height: 750px;
       position: relative;
-      background: var(--card-bg);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      border-radius: var(--border-radius);
+      background: transparent;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -43,174 +50,200 @@
 
     .card {
       position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      padding: 30px 24px;
+      top: 20px; left: 20px; right: 20px; bottom: 20px;
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+      padding: 40px 24px 30px;
       display: flex;
       flex-direction: column;
       opacity: 0;
       pointer-events: none;
-      transform: translateX(20px);
-      transition: all var(--transition-speed) ease;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       overflow-y: auto;
     }
+    .card::-webkit-scrollbar { display: none; }
 
     .card.active {
       opacity: 1;
       pointer-events: auto;
-      transform: translateX(0);
+      transform: translateY(0);
     }
 
-    h2 { font-size: 1.3rem; margin-bottom: 24px; line-height: 1.5; color: var(--text-main); }
-    .subtitle { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; }
+    /* タグとアイコン */
+    .header-top { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px; }
+    .icon-box { width: 48px; height: 48px; background: #F8EFEB; border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; }
+    .tag { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; letter-spacing: 0.05em; }
+    .tag-orange { background: var(--tag-orange); color: var(--tag-orange-text); }
+    .tag-green { background: var(--tag-green); color: var(--tag-green-text); }
 
-    .option-btn {
-      background: #F4F1EA;
-      border: 2px solid transparent;
-      padding: 16px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      font-size: 1rem;
-      color: var(--text-main);
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s;
-      width: 100%;
-    }
+    h2 { font-size: 1.5rem; margin-bottom: 12px; line-height: 1.4; color: var(--text-main); text-align: center; }
+    .subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; text-align: center; line-height: 1.5; }
 
-    .option-btn:hover, .option-btn:focus { background: #EAE6DF; }
-    .option-btn.selected {
-      background: #FFF3E0;
-      border-color: var(--primary-color);
-      color: var(--primary-color);
-      font-weight: bold;
-    }
-
+    /* 入力フォーム */
+    .input-group { background: #FAFAFA; border: 1px solid #EEEEEE; border-radius: 16px; padding: 16px; margin-bottom: 20px; }
+    .input-label { font-size: 0.8rem; font-weight: bold; color: var(--text-main); margin-bottom: 8px; display: block; }
     input[type="text"], textarea {
-      width: 100%;
-      padding: 16px;
-      border: 2px solid #EAE6DF;
-      border-radius: 12px;
-      font-size: 1rem;
-      background: #F9F8F6;
-      margin-top: 10px;
-      resize: none;
+      width: 100%; padding: 12px 16px; border: 1px solid #E0E0E0; border-radius: 12px; font-size: 0.95rem; background: #FFFFFF; resize: none;
     }
-    input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--primary-color); }
+    input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
-    .slider-container { margin: 30px 0; text-align: center; }
-    input[type="range"] { width: 100%; margin-bottom: 15px; accent-color: var(--primary-color); }
-    .slider-labels { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); }
-    #slider-value-text { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); margin-bottom: 10px; display: block; }
+    /* 選択肢ボタン */
+    .option-btn {
+      background: var(--btn-gray); border: 2px solid transparent; padding: 16px; border-radius: 16px; margin-bottom: 12px;
+      font-size: 0.95rem; color: var(--text-main); text-align: left; cursor: pointer; transition: all 0.2s; width: 100%; font-weight: 500;
+    }
+    .option-btn:hover { background: #F0F0F0; }
+    .option-btn.selected { background: var(--primary-light); border-color: var(--primary); color: var(--primary); font-weight: bold; }
 
-    .next-btn {
-      margin-top: auto;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 16px;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(224, 122, 95, 0.3);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .next-btn:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(224, 122, 95, 0.3); }
-    .next-btn:disabled { background: #D3D3D3; box-shadow: none; cursor: not-allowed; }
-
-    .emoji-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-top: 20px;
-    }
-    .emoji-card {
-      background: #F4F1EA;
-      border-radius: 12px;
-      padding: 30px 0;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .emoji-card.emoji-card-full { grid-column: span 2; }
-    .emoji-card:hover { background: #EAE6DF; transform: scale(1.05); }
-    .emoji-result { font-size: 4rem; margin: 30px 0; text-align: center; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .emoji-message { text-align: center; font-size: 1.1rem; line-height: 1.6; }
+    /* スライダー */
+    .slider-card { background: #FAFAFA; border-radius: 20px; padding: 30px 20px; text-align: center; margin-bottom: 20px; }
+    .slider-emoji { font-size: 3rem; margin-bottom: 10px; transition: transform 0.2s; }
+    .slider-badge { display: inline-block; background: #FFFFFF; padding: 6px 16px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; color: var(--primary); margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .slider-text { font-size: 1rem; font-weight: bold; margin-bottom: 30px; }
     
-    @keyframes pop {
-      0% { transform: scale(0.5); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
+    input[type="range"] {
+      -webkit-appearance: none; width: 100%; height: 8px; background: #E0E0E0; border-radius: 4px; outline: none; margin-bottom: 16px;
     }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: var(--primary); border: 4px solid #FFF; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer;
+    }
+    .slider-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--primary); font-weight: bold; }
+    .slider-labels span { background: var(--primary-light); padding: 4px 10px; border-radius: 12px; }
+
+    /* ボタンエリア */
+    .actions { display: flex; gap: 12px; margin-top: auto; }
+    .btn-back { background: #FFFFFF; color: var(--text-muted); border: 1px solid #E0E0E0; padding: 16px 20px; border-radius: 16px; font-size: 0.95rem; font-weight: bold; cursor: pointer; flex: 0 0 auto; }
+    .btn-next { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 16px; font-size: 1.05rem; font-weight: bold; cursor: pointer; flex: 1; box-shadow: 0 4px 12px rgba(211, 117, 86, 0.3); transition: all 0.2s; }
+    .btn-next:active { transform: translateY(2px); box-shadow: none; }
+    .btn-next:disabled { background: #D3D3D3; box-shadow: none; cursor: not-allowed; }
+
+    /* 絵文字選択画面 */
+    .notice-box { background: #FCFAFA; border: 1px solid #F0F0F0; border-radius: 16px; padding: 16px; text-align: center; margin-bottom: 24px; font-size: 0.9rem; }
+    .notice-box span { color: var(--primary); font-weight: bold; }
+    
+    .emoji-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 24px; }
+    .emoji-btn {
+      aspect-ratio: 1; border: 1px solid #E0E0E0; border-radius: 12px; background: #FFFFFF; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s;
+    }
+    .emoji-btn .num { font-size: 1.2rem; font-weight: bold; color: var(--primary); margin-bottom: 2px; }
+    .emoji-btn .txt { font-size: 0.55rem; color: var(--text-muted); }
+    .emoji-btn.active { border-color: var(--primary); border-width: 2px; background: var(--primary-light); transform: scale(1.05); }
+
+    /* 結果枠 */
+    .reveal-box {
+      border: 2px dashed var(--primary); border-radius: 20px; padding: 30px 20px; text-align: center; display: none; background: #FAFAFA; animation: fadeIn 0.5s ease;
+    }
+    .reveal-box.show { display: block; }
+    .reveal-title { font-size: 0.9rem; font-weight: bold; color: var(--primary); margin-bottom: 16px; }
+    .reveal-icon { font-size: 3.5rem; margin-bottom: 16px; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .reveal-msg { font-size: 1rem; font-weight: bold; line-height: 1.5; color: var(--text-main); }
+    
+    .restart-link { text-align: center; margin-top: 24px; display: none; }
+    .restart-link a { color: var(--text-muted); text-decoration: none; border-bottom: 1px solid var(--text-muted); font-size: 0.85rem; padding-bottom: 2px; cursor: pointer; }
+    .restart-link.show { display: block; }
+
+    @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
+  <div class="bg-circle-1"></div>
+  <div class="bg-circle-2"></div>
 
   <div class="container">
     
-    <!-- 歡迎頁 (新增輸入名字) -->
+    <!-- Step 0: Welcome -->
     <div class="card active" id="step-0">
-      <div style="text-align:center; margin:auto 0;">
-        <div style="font-size:3rem; margin-bottom:20px;">💌</div>
-        <h2>友達からの<br>ちょっとした質問状</h2>
-        <p class="subtitle">5つの簡単な質問です。<br>まずは、あなたの名前を教えてね！</p>
-        <input type="text" id="friend-name" placeholder="名前やニックネームを入力" oninput="checkName()">
+      <div class="header-top">
+        <div class="icon-box">✉️</div>
+        <div class="tag tag-orange">MINI QUESTIONNAIRE</div>
       </div>
-      <button class="next-btn" id="btn-start" disabled onclick="startQuiz()">はじめる ✨</button>
+      <h2>友達からの<br>ちょっとした質問状</h2>
+      <p class="subtitle">堅苦しいテストじゃありません！<br>直感で5つの質問に答えてみてね。最後にはちょっとしたお楽しみも用意してあります✨</p>
+      
+      <div class="input-group">
+        <label class="input-label">あなたのニックネーム（任意）</label>
+        <input type="text" id="friend-name" placeholder="例：ゆい、いつもの相棒..." oninput="checkName()">
+      </div>
+      
+      <div class="actions" style="margin-top:0;">
+        <button class="btn-next" onclick="startQuiz()">スタートする →</button>
+      </div>
     </div>
 
-    <!-- Q1 -->
+    <!-- Step 1 -->
     <div class="card" id="step-1">
-      <p class="subtitle">質問 1 / 5</p>
-      <h2>もし今、手元の用事が一段落したら、どこに行きたい？</h2>
-      <button class="option-btn" onclick="selectOption(1, '山')">🌲 山</button>
-      <button class="option-btn" onclick="selectOption(1, '海')">🌊 海</button>
-      <button class="option-btn" onclick="selectOption(1, 'ボウリング')">🎳 ボウリング</button>
-      <button class="option-btn" onclick="selectOption(1, '旅行')">✈️ 旅行</button>
-      <button class="option-btn" onclick="selectOption(1, 'other')">💡 その他（自由入力）</button>
-      <input type="text" id="q1-other" placeholder="どこに行きたい？" style="display:none;" oninput="checkInput(1)">
-      <button class="next-btn" id="btn-1" disabled onclick="nextStep(2)">次へ</button>
+      <h2>もし今、手元の用事が全部片付いたら、どこに行きたい？</h2>
+      <div style="flex:1;">
+        <button class="option-btn" onclick="selectOption(1, '山')">🌲 山</button>
+        <button class="option-btn" onclick="selectOption(1, '海')">🌊 海</button>
+        <button class="option-btn" onclick="selectOption(1, 'ボウリング')">🎳 ボウリング</button>
+        <button class="option-btn" onclick="selectOption(1, '旅行')">✈️ 旅行</button>
+        <button class="option-btn" onclick="selectOption(1, 'other')">💡 その他（自由入力）</button>
+        <input type="text" id="q1-other" placeholder="どこに行きたい？" style="display:none;" oninput="checkInput(1)">
+      </div>
+      <div class="actions">
+        <button class="btn-back" onclick="prevStep(0)">前へ戻る</button>
+        <button class="btn-next" id="btn-1" disabled onclick="nextStep(2)">次へ進む</button>
+      </div>
     </div>
 
-    <!-- Q2 (還原帶有顏文字的滑動條) -->
+    <!-- Step 2: Slider -->
     <div class="card" id="step-2">
-      <p class="subtitle">質問 2 / 5</p>
-      <h2>この質問状を送ってくれた人と、何か一緒にアクティビティをしたい？</h2>
-      <div class="slider-container">
-        <span id="slider-value-text">🙂 まあまあ (50%)</span>
+      <h2>このテストを送ってくれた人と、何か一緒にやりたいことはある？</h2>
+      <p class="subtitle" style="margin-bottom:12px;">スライダーを左右に動かして、今の気分に一番近いところを選んでね！</p>
+      
+      <div class="slider-card">
+        <div class="slider-emoji" id="s-emoji">🙂</div>
+        <div class="slider-badge"><span id="s-pct">50</span><span style="font-size:0.7em;">%</span></div>
+        <div class="slider-text" id="s-text">「タイミングが合えば！」</div>
+        
         <input type="range" id="q2-slider" min="0" max="100" value="50" oninput="updateSlider(this.value)">
         <div class="slider-labels">
-          <span>🙅‍♀️ 全然思わない</span>
-          <span>😍 超したい！</span>
+          <span>したくない</span>
+          <span>すごくしたい</span>
         </div>
       </div>
-      <button class="next-btn" onclick="nextStep(3)">次へ</button>
+
+      <div class="actions">
+        <button class="btn-back" onclick="prevStep(1)">前へ戻る</button>
+        <button class="btn-next" onclick="nextStep(3)">次へ進む</button>
+      </div>
     </div>
 
-    <!-- Q3 -->
+    <!-- Step 3 -->
     <div class="card" id="step-3">
-      <p class="subtitle">質問 3 / 5</p>
       <h2>もしこの友達とケンカしちゃったら、仲直りしたいと思う？</h2>
-      <button class="option-btn" onclick="selectOption(3, 'する、友達はいい人だから')">する、友達はいい人だから</button>
-      <button class="option-btn" onclick="selectOption(3, 'する、私にとって大切な人だから')">する、私にとって大切な人だから</button>
-      <button class="option-btn" onclick="selectOption(3, 'しない、最近はそんな気力がない')">しない、最近はそんな気力がない</button>
-      <button class="option-btn" onclick="selectOption(3, 'しない、誰のことも引き留めない')">しない、誰のことも引き留めない</button>
-      <button class="next-btn" id="btn-3" disabled onclick="nextStep(4)">次へ</button>
+      <div style="flex:1;">
+        <button class="option-btn" onclick="selectOption(3, 'する、いい人だから')">する、いい人だから</button>
+        <button class="option-btn" onclick="selectOption(3, 'する、私にとって大切な人だから')">する、私にとって大切な人だから</button>
+        <button class="option-btn" onclick="selectOption(3, 'しない、最近そこまでの気力がない')">しない、最近そこまでの気力がない</button>
+        <button class="option-btn" onclick="selectOption(3, 'しない、誰に対しても引き留めない')">しない、誰に対しても引き留めない</button>
+      </div>
+      <div class="actions">
+        <button class="btn-back" onclick="prevStep(2)">前へ戻る</button>
+        <button class="btn-next" id="btn-3" disabled onclick="nextStep(4)">次へ進む</button>
+      </div>
     </div>
 
-    <!-- Q4 -->
+    <!-- Step 4 -->
     <div class="card" id="step-4">
-      <p class="subtitle">質問 4 / 5</p>
-      <h2>最近、この友達には自分の本音を素直に話せている？</h2>
-      <button class="option-btn" onclick="selectOption(4, '話せているし、もっと色々伝えたい')">話せているし、もっと色々伝えたい</button>
-      <button class="option-btn" onclick="selectOption(4, '話せているけど、特に伝えたいことはないかな')">話せているけど、特に伝えたいことはないかな</button>
-      <button class="option-btn" onclick="selectOption(4, 'ちょっと難しい。でも、もっと素直に話せるようになりたい')">ちょっと難しい。でも、もっと素直に話せるようになりたい</button>
-      <button class="option-btn" onclick="selectOption(4, '無理、もうあまり関わりたくないかも')">無理、もうあまり関わりたくないかも</button>
-      <button class="next-btn" id="btn-4" disabled onclick="nextStep(5)">次へ</button>
+      <h2>最近、この友達には自分の本音を素直に話せてる？</h2>
+      <div style="flex:1;">
+        <button class="option-btn" onclick="selectOption(4, 'うん、もっと伝えたい')">うん、もっと伝えたい</button>
+        <button class="option-btn" onclick="selectOption(4, 'うん、でも特に伝えたいことはない')">うん、でも特に伝えたいことはない</button>
+        <button class="option-btn" onclick="selectOption(4, '少し難しい、でももっと素直になりたい')">少し難しい、でももっと素直になりたい</button>
+        <button class="option-btn" onclick="selectOption(4, '無理、もうあまり関わりたくない')">無理、もうあまり関わりたくない</button>
+      </div>
+      <div class="actions">
+        <button class="btn-back" onclick="prevStep(3)">前へ戻る</button>
+        <button class="btn-next" id="btn-4" disabled onclick="nextStep(5)">次へ進む</button>
+      </div>
     </div>
 
-   <!-- Step 5: Textarea -->
+    <!-- Step 5: Textarea -->
     <div class="card" id="step-5">
       <div class="header-top" style="justify-content:flex-start;">
         <div class="tag tag-green">FINAL QUESTION</div>
@@ -229,7 +262,7 @@
       </div>
     </div>
 
-   <!-- Step 6: Emoji Selection & Reveal -->
+    <!-- Step 6: Emoji Selection & Reveal -->
     <div class="card" id="step-6">
       <div style="text-align:center; margin-bottom:20px;">
         <div class="icon-box" style="margin:0 auto 12px; background:#F5EAE3; font-size:1.8rem;">🎁</div>
@@ -272,34 +305,31 @@
     </div>
 
   </div>
-    <!-- 最終結果頁 -->
-    <div class="card" id="step-7">
-      <div style="text-align:center; margin:auto 0;">
-        <h2 id="final-title">あなたが選んだのは...</h2>
-        <div class="emoji-result" id="final-emoji"></div>
-        <p class="emoji-message" id="final-message"></p>
-      </div>
-    </div>
-
-  </div>
 
   <script>
-    const answers = { name: "", q1: "", q2: "🙂 まあまあ (50%)", q3: "", q4: "", q5: "", emoji: "" };
+    const answers = { name: "", q1: "", q2: "🙂 50% (タイミングが合えば！)", q3: "", q4: "", q5: "", emoji: "" };
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeuFo-u_6iUdLEThAcfQIs3hi2EcRlny19TlSz5j1gpY3Yngp_DC3ZY9J4eqePwdlt_A/exec";
 
+    // スライダーの背景グラデーションを初期化
+    window.onload = () => { updateSliderBg(document.getElementById('q2-slider')); };
+
     function checkName() {
-      const nameInput = document.getElementById('friend-name').value.trim();
-      document.getElementById('btn-start').disabled = nameInput === "";
+      // 任意なのでボタンの無効化はしない設定にしました
     }
 
     function startQuiz() {
-      answers.name = document.getElementById('friend-name').value.trim();
+      const nameInput = document.getElementById('friend-name').value.trim();
+      answers.name = nameInput === "" ? "匿名" : nameInput;
       nextStep(1);
     }
 
     function nextStep(step) {
       document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
       document.getElementById(`step-${step}`).classList.add('active');
+    }
+    
+    function prevStep(step) {
+      nextStep(step);
     }
 
     function selectOption(qNumber, value) {
@@ -311,16 +341,16 @@
       event.target.classList.add('selected');
 
       if (value === 'other') {
-        if(otherInput) otherInput.style.display = 'block';
+        if(otherInput) { otherInput.style.display = 'block'; otherInput.focus(); }
         answers[`q${qNumber}`] = otherInput ? otherInput.value : "";
       } else {
         if(otherInput) otherInput.style.display = 'none';
         answers[`q${qNumber}`] = value;
       }
-      checkInput(qNumber, value);
+      checkInput(qNumber);
     }
 
-    function checkInput(qNumber, value) {
+    function checkInput(qNumber) {
       const btn = document.getElementById(`btn-${qNumber}`);
       if (!btn) return;
 
@@ -338,15 +368,35 @@
     }
 
     function updateSlider(val) {
-      let text = "";
-      if(val < 20) text = "🙅‍♀️ 全然思わない";
-      else if(val < 40) text = "🤔 あまり思わない";
-      else if(val < 60) text = "🙂 まあまあ";
-      else if(val < 80) text = "😆 したい！";
-      else text = "😍 超したい！";
+      updateSliderBg(document.getElementById('q2-slider'));
       
-      document.getElementById('slider-value-text').innerText = `${text} (${val}%)`;
-      answers.q2 = `${text} (${val}%)`;
+      let e = "🙂", text = "「タイミングが合えば！」";
+      if(val < 20)      { e = "🙅‍♀️"; text = "「今はいいかな…」"; }
+      else if(val < 40) { e = "🤔"; text = "「気が向いたら」"; }
+      else if(val < 60) { e = "🙂"; text = "「タイミングが合えば！」"; }
+      else if(val < 80) { e = "😆"; text = "「ぜひぜひ！」"; }
+      else              { e = "😍"; text = "「絶対に！」"; }
+      
+      document.getElementById('s-emoji').innerText = e;
+      document.getElementById('s-pct').innerText = val;
+      document.getElementById('s-text').innerText = text;
+      
+      answers.q2 = `${e} ${val}% (${text})`;
+    }
+
+    function updateSliderBg(slider) {
+      const val = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+      slider.style.background = `linear-gradient(to right, var(--primary) ${val}%, #E0E0E0 ${val}%)`;
+    }
+
+    function updateCharCount() {
+      const text = document.getElementById('q5-text').value;
+      const count = text.length;
+      document.getElementById('char-count').innerText = `${count} / 300`;
+      if(count > 300) {
+        document.getElementById('q5-text').value = text.substring(0, 300);
+        document.getElementById('char-count').innerText = `300 / 300`;
+      }
     }
 
     function submitAndNext() {
@@ -355,28 +405,38 @@
       
       nextStep(6);
       
+      // バックグラウンドで送信
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(answers)
-      }).catch(err => console.log('Background save error', err));
+      }).catch(err => console.log(err));
     }
 
-    function revealEmoji(number, emoji) {
-      answers.emoji = `選了 ${number}號: ${emoji}`;
-      document.getElementById('final-emoji').innerText = emoji;
+    let isRevealed = false;
+    function revealEmoji(number, emoji, msg) {
+      if(isRevealed) return; // 1回だけ引けるようにする
+      isRevealed = true;
       
-      let msg = "";
-      if(emoji === '🌱') msg = "新しい何かが始まりそうな予感！<br>自分のペースですくすく育ってね。";
-      if(emoji === '🍀') msg = "ラッキーなことが起こるかも！<br>小さな幸せを見つけられますように。";
-      if(emoji === '🫧') msg = "心がふわっと軽くなるような<br>癒しの時間が訪れますように。";
-      if(emoji === '🌙') msg = "今日もお疲れ様。<br>ゆっくり休んで素敵な夢を見てね。";
-      if(emoji === '🌻') msg = "あなたらしい笑顔が一番！<br>いつも明るいパワーをありがとう。";
+      // ボタンのスタイル変更
+      document.querySelectorAll('.emoji-btn').forEach(b => b.style.opacity = '0.5');
+      const activeBtn = document.getElementById(`em-btn-${number}`);
+      activeBtn.style.opacity = '1';
+      activeBtn.classList.add('active');
+      document.getElementById(`em-num-${number}`).innerText = emoji;
+      document.getElementById(`em-txt-${number}`).innerText = `NO.${number}`;
       
-      document.getElementById('final-message').innerHTML = msg;
-      nextStep(7);
+      // 枠の表示
+      document.getElementById('r-title').innerText = `NO.${number} の絵文字がオープン！`;
+      document.getElementById('r-icon').innerText = emoji;
+      document.getElementById('r-msg').innerText = msg;
       
+      document.getElementById('reveal-box').classList.add('show');
+      document.getElementById('restart-link').classList.add('show');
+
+      // 結果を追記送信
+      answers.emoji = `NO.${number} ${emoji}`;
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
