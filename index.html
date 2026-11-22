@@ -163,7 +163,7 @@
     <!-- Q1 -->
     <div class="card" id="step-1">
       <p class="subtitle">質問 1 / 5</p>
-      <h2>今抱えていることが一段落したら、どこに行きたい？</h2>
+      <h2>もし今、手元の用事が一段落したら、どこに行きたい？</h2>
       <button class="option-btn" onclick="selectOption(1, '山')">🌲 山</button>
       <button class="option-btn" onclick="selectOption(1, '海')">🌊 海</button>
       <button class="option-btn" onclick="selectOption(1, 'ボウリング')">🎳 ボウリング</button>
@@ -210,12 +210,23 @@
       <button class="next-btn" id="btn-4" disabled onclick="nextStep(5)">次へ</button>
     </div>
 
-    <!-- Q5 -->
+   <!-- Step 5: Textarea -->
     <div class="card" id="step-5">
-      <p class="subtitle">最後の質問 5 / 5</p>
-      <h2>これで最後です！今、相手に伝えたいことがあれば自由に書いてね。</h2>
-      <textarea id="q5-text" rows="5" placeholder="なんでもどうぞ！(空白でもOK)" oninput="checkInput(5)"></textarea>
-      <button class="next-btn" id="btn-5" onclick="submitAndNext()">回答を完了する ✨</button>
+      <div class="header-top" style="justify-content:flex-start;">
+        <div class="tag tag-green">FINAL QUESTION</div>
+      </div>
+      <h2 style="text-align:left;">これが最後の質問です。伝えたいことがあれば自由に書いてね</h2>
+      <p class="subtitle" style="text-align:left; color:#D37556;">空欄のまま完了しても大丈夫です ✨</p>
+      
+      <div style="flex:1; position:relative;">
+        <textarea id="q5-text" rows="7" placeholder="普段言えないことや、最近思っていることなど何でもOK！" oninput="updateCharCount()"></textarea>
+        <div id="char-count" style="text-align:right; font-size:0.8rem; color:var(--text-muted); margin-top:8px;">0 / 300</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-back" onclick="prevStep(4)">前へ戻る</button>
+        <button class="btn-next" id="btn-5" onclick="submitAndNext()">回答を完了する ✨</button>
+      </div>
     </div>
 
    <!-- Step 6: Emoji Selection & Reveal -->
